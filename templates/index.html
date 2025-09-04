@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Annotation Tool</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        img { max-width: 400px; display: block; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Annotation Tool</h1>
+    <div id="task"></div>
+    <div id="labels">
+        <label><input type="checkbox" value="positive"> Positive</label>
+        <label><input type="checkbox" value="negative"> Negative</label>
+        <label><input type="checkbox" value="neutral"> Neutral</label>
+    </div>
+    <button onclick="submit()">Confirm</button>
+
+    <script>
+        let currentImage = "";
+        let currentText = "";
+
+        async function loadTask() {
+            const res = await fetch("/get_task");
+            const data = await res.json();
+            currentImage = data.image;
+            currentText = data.text;
+
+            document.getElementById("task").innerHTML = `
+                <img src="${data.image}">
+                <p>${data.text}</p>
+            `;
+        }
+
+        async function submit() {
+            const labels = Array.from(document.querySelectorAll("#labels input:checked"))
+                               .map(el => el.value);
+
+            await fetch("/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image: currentImage, text: currentText, labels: labels })
+            });
+
+                        // ✅ Clear labels after submission
+            document.querySelectorAll("#labels input").forEach(el => el.checked = false);
+            
+            // Load next
+            loadTask();
+        }
+
+        loadTask();
+    </script>
+</body>
+</html>
