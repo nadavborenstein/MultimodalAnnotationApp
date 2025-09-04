@@ -175,17 +175,14 @@ with st.expander("Instructions", expanded=True):
     st.markdown(
         """
     Please read the following instructions carefully before proceeding with the annotation task.
-
-    1. You will be presented with a series of images and corresponding text snippets.
-    2. Your task is to evaluate whether the text accurately describes the content of the image.
-    3. For each image-text pair, select one of the following options:
-       - "Accurate": The text accurately describes the image.
-       - "Inaccurate": The text does not accurately describe the image.
-       - "Unclear": It is unclear whether the text describes the image accurately.
-    4. Please take your time to consider each pair carefully before making your selection.
-    5. If you have any questions or need clarification, please contact the study administrator.
-
-    Thank you for your participation!
+    
+    You will be shown a series of images extracted from tweets. Your task is to annotate the emotions expressed in each image. The possible emotions are categorized into positive and negative emotions.
+    In particular, you will be asked to identify the presence of the following emotions:
+    - Positive Emotions: Hope, Joy
+    - Negative Emotions: Fear, Anger
+    - Other Emotions: You can also specify other positive or negative emotions not listed above.
+    - None of the above: If none of the listed emotions are present, you can select this option.
+    
     """
     )
 
