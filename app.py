@@ -5,6 +5,7 @@ import pandas as pd
 from glob import glob
 from st_files_connection import FilesConnection
 import io
+from PIL import Image
 
 conn = st.connection("gcs", type=FilesConnection)
 
@@ -83,10 +84,9 @@ def clear_selections():
         st.session_state["emotion_label"] = []
 
 
-def confirm_label(progress: pd.DataFrame, note: pd.Series):
-    progress_file = f"{PROGRESS_FOLDER}/progress_{st.session_state.worker_id}.csv"
+def collect_selected_labels():
     selected_labels = []
-    for emotion in ["fear", "anger", "hope", "joy"]:
+    for emotion in ["fear", "anger", "hope", "joy", "none"]:
         if st.session_state.get(emotion, False):
             selected_labels.append(emotion)
     other_positive = st.session_state.get("other_positive", "")
@@ -105,6 +105,19 @@ def confirm_label(progress: pd.DataFrame, note: pd.Series):
             if label.strip() and label.strip().lower() not in selected_labels
         ]
         selected_labels.extend(other_negative_labels)
+
+    return selected_labels
+
+
+def confirm_label(progress: pd.DataFrame, note: pd.Series):
+    progress_file = f"{PROGRESS_FOLDER}/progress_{st.session_state.worker_id}.csv"
+    selected_labels = collect_selected_labels()
+
+    st.write("You have selected the following labels:")
+    st.write(selected_labels)
+    if not selected_labels:
+        st.error("Error: Please select at least one label before confirming.")
+        return
 
     index = progress[progress[ID_COL] == note[ID_COL]].index
     if index.empty:
@@ -197,7 +210,15 @@ if next_item_id is None:
 note = notes[notes[ID_COL] == next_item_id].iloc[0]
 image_path = os.path.join(IMAGE_FOLDER, note["image_name"])
 image_data = conn.fs.open(image_path, "rb").read()
-st.image(image_data, caption="Image to annotate", use_container_width=True)
+# image = Image.open(io.BytesIO(image_data))
+# image_width, image_height = image.size
+# height = max(800, image_height)
+# width = int((height / image_height) * image_width)
+
+st.image(
+    image_data,
+    caption="Image to annotate",
+)
 
 col1, col2 = st.columns(2)
 
@@ -217,4 +238,9 @@ st.header("None of the above")
 st.checkbox("None of the above", key="none")
 
 
-st.button("Confirm", on_click=lambda: confirm_label(progress=progress, note=note))
+st.button(
+    "Confirm",
+    on_click=lambda: confirm_label(progress=progress, note=note),
+    key="confirm_button",
+    disabled=not collect_selected_labels(),
+)
