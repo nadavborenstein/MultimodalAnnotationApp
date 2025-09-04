@@ -4,17 +4,17 @@ import os
 import pandas as pd
 from glob import glob
 from st_files_connection import FilesConnection
+import io
 
 conn = st.connection("gcs", type=FilesConnection)
-df = conn.read("annotation-experiment/myfile.csv", input_format="csv", ttl=600)
 
-for row in df.itertuples():
-    st.write(f"{row.Owner} has a :{row.Pet}:")
 
 NOTES = "data/tweets_with_images.csv"
 MAX_ANNOTATIONS_PER_WORKER = 50
 ID_COL = "tweetId"
 IMAGE_FOLDER = "static/images/"
+PROGRESS_FOLDER = "annotation-experiment/data/worker_progress"
+DONE_FILE = "annotation-experiment/data/done.txt"
 
 
 @st.cache_resource
@@ -28,7 +28,7 @@ def load_notes() -> pd.DataFrame:
 
 
 def load_done() -> set:
-    done = open("data/done.txt").read()
+    done = conn.fs.open(DONE_FILE, "r").read()
     done = set(done.split("\n"))
     done = {d.strip() for d in done if d}
     return done
@@ -36,9 +36,10 @@ def load_done() -> set:
 
 def get_worker_session(worker_id: str):
     # check if a progress file exists for this worker
-    progress_file = f"data/worker_progress/progress_{worker_id}.csv"
-    if os.path.exists(progress_file):
-        progress = pd.read_csv(progress_file)
+    progress_file = f"{PROGRESS_FOLDER}/progress_{worker_id}.csv"
+    if conn.fs.exists(progress_file):
+        progress = conn.fs.open(progress_file, "r").read()
+        progress = pd.read_csv(io.StringIO(progress))
         return progress
     else:
         notes = load_notes()
@@ -56,12 +57,12 @@ def get_worker_session(worker_id: str):
                 "label": [None] * len(ids_to_label),
             }
         )
-        progress.to_csv(progress_file, index=False)
+        s = progress.to_csv(index=False)
+        conn.fs.open(progress_file, "w").write(s)
         return progress
 
 
 def select_next_item_for_worker_id(progress: pd.DataFrame) -> str:
-    # Dummy implementation for example purposes
     not_done = progress[progress["done"].isnull()]
     if not_done.empty:
         return None
@@ -70,7 +71,7 @@ def select_next_item_for_worker_id(progress: pd.DataFrame) -> str:
 
 
 def save_label(progress: pd.DataFrame, note: pd.Series):
-    progress_file = f"data/worker_progress/progress_{st.session_state.worker_id}.csv"
+    progress_file = f"{PROGRESS_FOLDER}/progress_{st.session_state.worker_id}.csv"
     index = progress[progress[ID_COL] == note[ID_COL]].index
     if index.empty:
         st.error("Error: Note ID not found in progress.")
@@ -78,7 +79,8 @@ def save_label(progress: pd.DataFrame, note: pd.Series):
     index = index[0]
     progress.at[index, "done"] = True
     progress.at[index, "label"] = str(st.session_state.emotion_label)
-    progress.to_csv(progress_file, index=False)
+    s = progress.to_csv(index=False)
+    conn.fs.open(progress_file, "w").write(s)
 
 
 st.title("Annotation experiment")
