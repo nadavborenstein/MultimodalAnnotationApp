@@ -3,6 +3,13 @@ import random
 import os
 import pandas as pd
 from glob import glob
+from st_files_connection import FilesConnection
+
+conn = st.connection("gcs", type=FilesConnection)
+df = conn.read("annotation-experiment/myfile.csv", input_format="csv", ttl=600)
+
+for row in df.itertuples():
+    st.write(f"{row.Owner} has a :{row.Pet}:")
 
 NOTES = "data/tweets_with_images.csv"
 MAX_ANNOTATIONS_PER_WORKER = 50
