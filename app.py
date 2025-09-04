@@ -9,22 +9,23 @@ import io
 conn = st.connection("gcs", type=FilesConnection)
 
 
-NOTES = "data/tweets_with_images.csv"
+NOTES = "annotation-experiment/data/tweets_with_images.csv"
 MAX_ANNOTATIONS_PER_WORKER = 50
 ID_COL = "tweetId"
-IMAGE_FOLDER = "static/images/"
+IMAGE_FOLDER = "annotation-experiment/static/images/"
 PROGRESS_FOLDER = "annotation-experiment/data/worker_progress"
 DONE_FILE = "annotation-experiment/data/done.txt"
 
 
 @st.cache_resource
 def load_notes() -> pd.DataFrame:
-    data = pd.read_csv(NOTES)
-    images = glob(os.path.join(IMAGE_FOLDER, "*.png"))
+    notes = conn.fs.open(NOTES, "r").read()
+    notes = pd.read_csv(io.StringIO(notes))
+    images = conn.fs.glob(f"{IMAGE_FOLDER}*.png")
     image_names = [os.path.basename(img) for img in images]
-    data = data[data["image_name"].isin(image_names)]
-    data = data.drop_duplicates(subset=["image_name"])
-    return data
+    notes = notes[notes["image_name"].isin(image_names)]
+    notes = notes.drop_duplicates(subset=["image_name"])
+    return notes
 
 
 def load_done() -> set:
@@ -70,15 +71,49 @@ def select_next_item_for_worker_id(progress: pd.DataFrame) -> str:
     return next_id
 
 
-def save_label(progress: pd.DataFrame, note: pd.Series):
+def clear_selections():
+    for key in ["fear", "anger", "hope", "joy", "none"]:
+        if key in st.session_state:
+            st.session_state[key] = False
+    for key in ["other_positive", "other_negative"]:
+        if key in st.session_state:
+            st.session_state[key] = ""
+
+    if "emotion_label" in st.session_state:
+        st.session_state["emotion_label"] = []
+
+
+def confirm_label(progress: pd.DataFrame, note: pd.Series):
     progress_file = f"{PROGRESS_FOLDER}/progress_{st.session_state.worker_id}.csv"
+    selected_labels = []
+    for emotion in ["fear", "anger", "hope", "joy"]:
+        if st.session_state.get(emotion, False):
+            selected_labels.append(emotion)
+    other_positive = st.session_state.get("other_positive", "")
+    other_negative = st.session_state.get("other_negative", "")
+    if other_positive:
+        other_positive_labels = [
+            label.strip()
+            for label in other_positive.split(",")
+            if label.strip() and label.strip().lower() not in selected_labels
+        ]
+        selected_labels.extend(other_positive_labels)
+    if other_negative:
+        other_negative_labels = [
+            label.strip()
+            for label in other_negative.split(",")
+            if label.strip() and label.strip().lower() not in selected_labels
+        ]
+        selected_labels.extend(other_negative_labels)
+
     index = progress[progress[ID_COL] == note[ID_COL]].index
     if index.empty:
         st.error("Error: Note ID not found in progress.")
         return
     index = index[0]
     progress.at[index, "done"] = True
-    progress.at[index, "label"] = str(st.session_state.emotion_label)
+    progress.at[index, "label"] = str(selected_labels)
+    clear_selections()
     s = progress.to_csv(index=False)
     conn.fs.open(progress_file, "w").write(s)
 
@@ -164,11 +199,25 @@ if next_item_id is None:
 
 note = notes[notes[ID_COL] == next_item_id].iloc[0]
 image_path = os.path.join(IMAGE_FOLDER, note["image_name"])
-st.image(image_path, caption="Image to annotate", use_container_width=True)
+image_data = conn.fs.open(image_path, "rb").read()
+st.image(image_data, caption="Image to annotate", use_container_width=True)
 
-st.multiselect(
-    "What emotion does the image evoke?",
-    key="emotion_label",
-    options=["None", "Fear", "Anger", "Hope", "Joy"],
-)
-st.button("Confirm", on_click=lambda: save_label(progress=progress, note=note))
+col1, col2 = st.columns(2)
+
+with col1:
+    st.header("Positive Emotions")
+    st.checkbox("Hope", key="hope")
+    st.checkbox("Joy", key="joy")
+    st.text_input("Other positive emotions (comma separated)", key="other_positive")
+
+with col2:
+    st.header("Negative Emotions")
+    st.checkbox("Fear", key="fear")
+    st.checkbox("Anger", key="anger")
+    st.text_input("Other negative emotions (comma separated)", key="other_negative")
+
+st.header("None of the above")
+st.checkbox("None of the above", key="none")
+
+
+st.button("Confirm", on_click=lambda: confirm_label(progress=progress, note=note))
