@@ -116,10 +116,7 @@ def confirm_label(progress: pd.DataFrame, note: pd.Series):
     progress_file = f"{PROGRESS_FOLDER}/progress_{st.session_state.worker_id}.csv"
     selected_labels = collect_selected_labels()
 
-    st.write("You have selected the following labels:")
-    st.write(selected_labels)
     if not selected_labels:
-        st.error("Error: Please select at least one label before confirming.")
         return
 
     index = progress[progress[ID_COL] == note[ID_COL]].index
