@@ -22,6 +22,9 @@ DONE_FILE = "annotation-experiment/data/done.txt"
 def load_notes() -> pd.DataFrame:
     notes = conn.fs.open(NOTES, "r").read()
     notes = pd.read_csv(io.StringIO(notes))
+    # seed from worker_id
+    seed = hash(st.session_state.worker_id) % (2**31)
+    notes = notes.sample(frac=1, random_state=seed).reset_index(drop=True)
     images = conn.fs.glob(f"{IMAGE_FOLDER}*.png")
     image_names = [os.path.basename(img) for img in images]
     notes = notes[notes["image_name"].isin(image_names)]
@@ -133,17 +136,16 @@ def confirm_label(progress: pd.DataFrame, note: pd.Series):
 
 st.title("Annotation experiment")
 
-with st.container(key="consent_container"):
-    st.header("Consent")
-    st.radio(
-        label="Do you consent to participate in this study?",
-        options=["", "No", "Yes"],
-        key="consent",
-        horizontal=True,
-        index=0,
-        help="You must consent to participate in this study to proceed.",
-        on_change=lambda: st.session_state.update({"show_consent": False}),
-    )
+st.header("Consent")
+st.radio(
+    label="Do you consent to participate in this study?",
+    options=["", "No", "Yes"],
+    key="consent",
+    horizontal=True,
+    index=0,
+    help="You must consent to participate in this study to proceed.",
+    on_change=lambda: st.session_state.update({"show_consent": False}),
+)
 
 
 if st.session_state.consent == "Yes":
