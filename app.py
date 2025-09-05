@@ -12,7 +12,7 @@ conn = st.connection("gcs", type=FilesConnection)
 
 
 NOTES = "annotation-experiment/data/tweets_with_images.csv"
-MAX_ANNOTATIONS_PER_WORKER = 10  # TODO: adjust as needed
+MAX_ANNOTATIONS_PER_WORKER = 20  # TODO: adjust as needed
 ID_COL = "tweetId"
 IMAGE_FOLDER = "annotation-experiment/static/images/"
 PROGRESS_FOLDER = "annotation-experiment/data/worker_progress"
@@ -50,6 +50,7 @@ def load_notes() -> pd.DataFrame:
     image_names = [os.path.basename(img) for img in images]
     notes = notes[notes["image_name"].isin(image_names)]
     notes = notes.drop_duplicates(subset=["image_name"])
+    notes = notes.head(20)
     notes.set_index(ID_COL, inplace=True, drop=False)
     return notes
 
@@ -236,17 +237,21 @@ expander.markdown(
     """
     Please read the following instructions carefully before proceeding with the annotation task.
     
-    You will be shown a series of images extracted from tweets. **Your task is to identify the emotions each image evokes.**
-    **This is a subjective task, and there are no right or wrong answers.** We are interested in your personal emotional response to each image.
-    You can select multiple emotions for each image if you feel that more than one emotion is present.
+    You will be shown a series of images extracted from tweets on X linked to misinformation. **Your task is to identify the emotions each image evokes.**
+    This is a subjective task, and there are no right or wrong answers. We are interested in your personal emotional response to each image.
     
-    The possible emotions are categorized into positive and negative emotions.
+    
+    
+    The possible emotions are categorized into positive and negative emotions. You can select multiple emotions for each image if you feel that more than one emotion is present.
     In particular, you will be asked to identify the presence of the following emotions:
     - **Positive Emotions**: Hope, Joy, Pride, Curiosity
     - **Negative Emotions**: Fear, Anger, Sadness, Ridicule
     - **No Emotion**: If you believe that the image does not evoke any emotion.
     
     Additionally, there are text boxes where you can specify any other positive or negative emotions that you feel are relevant but not listed above.
+    
+    **Occasionally, images may contain text.** In such cases, please focus on the overall emotional impact of both the image and textual content.
+
     """
 )
 
