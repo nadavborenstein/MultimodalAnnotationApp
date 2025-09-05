@@ -183,7 +183,7 @@ st.radio(
     index=0,
     help="You must consent to participate in this study to proceed.",
     on_change=lambda: st.session_state.update({"show_consent": False}),
-    disabled="worker_id" in st.session_state and st.session_state.worker_id,
+    disabled="worker_id" in st.session_state and len(st.session_state.worker_id),
 )
 
 
@@ -200,7 +200,7 @@ elif st.session_state.consent == "No":
         key="worker_id",
         placeholder="ID",
         value=st.session_state.get("worker_id", ""),
-        disabled="worker_id" in st.session_state and st.session_state.worker_id,
+        disabled="worker_id" in st.session_state and len(st.session_state.worker_id),
     )
     if st.session_state.worker_id:
         record_non_participation()
@@ -219,7 +219,7 @@ st.text_input(
     key="worker_id",
     placeholder=placeholder,
     value=st.session_state.get("worker_id", ""),
-    disabled="worker_id" in st.session_state and st.session_state.worker_id,
+    disabled="worker_id" in st.session_state and len(st.session_state.worker_id),
     help="Your Prolific ID is used to track your progress and ensure you do not annotate the same item multiple times.",
 )
 if not st.session_state.worker_id:
