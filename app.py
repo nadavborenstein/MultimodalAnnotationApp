@@ -236,13 +236,17 @@ expander.markdown(
     """
     Please read the following instructions carefully before proceeding with the annotation task.
     
-    You will be shown a series of images extracted from tweets. Your task is to annotate the emotions expressed in each image. The possible emotions are categorized into positive and negative emotions.
-    In particular, you will be asked to identify the presence of the following emotions:
-    - Positive Emotions: Hope, Joy
-    - Negative Emotions: Fear, Anger
-    - Other Emotions: You can also specify other positive or negative emotions not listed above.
-    - None of the above: If none of the listed emotions are present, you can select this option.
+    You will be shown a series of images extracted from tweets. **Your task is to identify the emotions each image evokes.**
+    **This is a subjective task, and there are no right or wrong answers.** We are interested in your personal emotional response to each image.
+    You can select multiple emotions for each image if you feel that more than one emotion is present.
     
+    The possible emotions are categorized into positive and negative emotions.
+    In particular, you will be asked to identify the presence of the following emotions:
+    - **Positive Emotions**: Hope, Joy, Pride, Curiosity
+    - **Negative Emotions**: Fear, Anger, Sadness, Ridicule
+    - **No Emotion**: If you believe that the image does not evoke any emotion.
+    
+    Additionally, there are text boxes where you can specify any other positive or negative emotions that you feel are relevant but not listed above.
     """
 )
 
@@ -284,8 +288,8 @@ with col2:
         st.checkbox(emotion.capitalize(), key=emotion)
     st.text_input("Other negative emotions (comma separated)", key="other_negative")
 
-st.header("None of the above")
-st.checkbox("None of the above", key="none")
+st.header("No emotion")
+st.checkbox("No emotion", key="none")
 
 
 st.button(
