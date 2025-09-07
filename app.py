@@ -167,48 +167,13 @@ def confirm_label(progress: pd.DataFrame, note: pd.Series):
     index = note[ID_COL]
     progress.at[index, "done"] = True
     progress.at[index, "label"] = str(selected_labels)
-    clear_selections()
+    # clear_selections()
     s = progress.to_csv(index=False)
     conn.fs.open(progress_file, "w").write(s)
     append_to_file(index, DONE_FILE)
 
 
 st.title("Annotation experiment")
-
-st.header("Consent")
-st.radio(
-    label="Do you consent to participate in this study?",
-    options=["", "No", "Yes"],
-    key="consent",
-    horizontal=True,
-    index=0,
-    help="You must consent to participate in this study to proceed.",
-    on_change=lambda: st.session_state.update({"show_consent": False}),
-    disabled="worker_id" in st.session_state and len(st.session_state.worker_id),
-)
-
-
-if st.session_state.consent == "Yes":
-    st.session_state.show_consent = False
-    st.success("Thank you for consenting to participate in the study.")
-    st.write("You can now proceed with the annotation task.")
-    # Here you can add the code to display the annotation task
-elif st.session_state.consent == "No":
-    # hide the rest of the page
-    st.error("You have chosen not to participate in the study.")
-    st.text_input(
-        "Please enter your Prolific ID to confirm your choice",
-        key="worker_id",
-        placeholder="ID",
-        value=st.session_state.get("worker_id", ""),
-        disabled="worker_id" in st.session_state and len(st.session_state.worker_id),
-    )
-    if st.session_state.worker_id:
-        record_non_participation()
-    st.stop()
-else:
-    st.warning("Please provide your consent to proceed.")
-    st.stop()
 
 if "worker_id" not in st.session_state:
     placeholder = "ID"
@@ -230,6 +195,37 @@ else:
     st.success(
         f"Thank you for providing your Prolific ID: {st.session_state.worker_id}."
     )
+
+st.header("Consent")
+st.radio(
+    label="Do you consent to participate in this study?",
+    options=["", "No", "Yes"],
+    key="consent",
+    horizontal=True,
+    index=0,
+    help="You must consent to participate in this study to proceed.",
+    on_change=lambda: st.session_state.update({"show_consent": False}),
+    disabled="consent" in st.session_state
+    and st.session_state.consent in ["Yes", "No"],
+)
+
+if st.session_state.consent == "Yes":
+    st.session_state.show_consent = False
+    st.success("Thank you for consenting to participate in the study.")
+    st.write("You can now proceed with the annotation task.")
+    # Here you can add the code to display the annotation task
+elif st.session_state.consent == "No":
+    # hide the rest of the page
+    st.error("You have chosen not to participate in the study.")
+    record_non_participation()
+    st.error(
+        "please copy and paste the following code into Prolific to confirm your choice: CAOIUYYS"
+    )
+    st.stop()
+else:
+    st.warning("Please provide your consent to proceed.")
+    st.stop()
+
 
 st.header("Instructions")
 expander = st.expander("Instructions", expanded=True, icon="❗️")
@@ -259,8 +255,15 @@ expander.markdown(
 notes = load_notes()
 progress = get_worker_session(st.session_state.worker_id, notes=notes)
 next_item_id = select_next_item_for_worker_id(progress)
+st.write(
+    f"You have annotated {progress['done'].notnull().sum()} out of {len(progress)} items."
+)
+st.write(f"next item id: {next_item_id}")
 if next_item_id is None:
     st.success("You have completed all your annotations. Thank you!")
+    st.success(
+        "Copy and paste the following code into Prolific to receive credit: CGDTTW1Q"
+    )
     st.stop()
 
 note = notes.loc[next_item_id]
@@ -278,29 +281,38 @@ st.image(
     caption="Image to annotate",
 )
 
-col1, col2 = st.columns(2)
 
-with col1:
-    st.header("Positive Emotions")
-    for emotion in POSITIVE_EMOTIONS:
-        st.checkbox(emotion.capitalize(), key=emotion)
+with st.form("annotation_form", clear_on_submit=True):
+    col1, col2 = st.columns(2)
+    with col1:
+        st.header("Positive Emotions")
+        for emotion in POSITIVE_EMOTIONS:
+            st.checkbox(emotion.capitalize(), key=emotion)
 
-    st.text_input("Other positive emotions (comma separated)", key="other_positive")
+        st.text_input("Other positive emotions (comma separated)", key="other_positive")
 
-with col2:
-    st.header("Negative Emotions")
-    for emotion in NEGATIVE_EMOTIONS:
-        st.checkbox(emotion.capitalize(), key=emotion)
-    st.text_input("Other negative emotions (comma separated)", key="other_negative")
+    with col2:
+        st.header("Negative Emotions")
+        for emotion in NEGATIVE_EMOTIONS:
+            st.checkbox(emotion.capitalize(), key=emotion)
+        st.text_input("Other negative emotions (comma separated)", key="other_negative")
 
-st.header("No emotion")
-st.checkbox("No emotion", key="none")
+    st.header("No emotion")
+    st.checkbox("No emotion", key="none")
+
+    submitted = st.form_submit_button("Submit")
+    if submitted:
+        if not collect_selected_labels():
+            st.warning("Please select at least one emotion before submitting.")
+        else:
+            confirm_label(progress=progress, note=note)
+            st.rerun()
 
 
-st.button(
-    "Confirm",
-    on_click=lambda: confirm_label(progress=progress, note=note),
-    key="confirm_button",
-    disabled=not collect_selected_labels(),
-    help="Please select at least one emotion before confirming.",
-)
+# st.button(
+#     "Confirm",
+#     on_click=lambda: confirm_label(progress=progress, note=note),
+#     key="confirm_button",
+#     disabled=not collect_selected_labels(),
+#     help="Please select at least one emotion before confirming.",
+# )
