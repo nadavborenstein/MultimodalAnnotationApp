@@ -7,6 +7,7 @@ from st_files_connection import FilesConnection
 import io
 from PIL import Image
 from collections import Counter
+from time import time
 
 conn = st.connection("gcs", type=FilesConnection)
 
@@ -21,6 +22,14 @@ NON_PARTICIPANTS_FILE = "annotation-experiment/data/non_participants.txt"
 NUM_ANNOTATORS_PER_ITEM = 3  # TODO: adjust as needed
 POSITIVE_EMOTIONS = ["hope", "joy", "pride", "curiosity"]
 NEGATIVE_EMOTIONS = ["fear", "anger", "sadness", "ridicule"]
+
+
+def time_before():
+    return int(time() * 1000)
+
+
+def timeit(start_time):
+    return int(time() * 1000) - start_time
 
 
 def append_to_file(item: str, file_path: str):
@@ -251,14 +260,18 @@ expander.markdown(
     """
 )
 
-
+time_start = time_before()
 notes = load_notes()
+st.write(f"Notes loaded in {timeit(time_start)} ms")
+
+time_start = time_before()
 progress = get_worker_session(st.session_state.worker_id, notes=notes)
+st.write(f"Progress loaded in {timeit(time_start)} ms")
+
+time_start = time_before()
 next_item_id = select_next_item_for_worker_id(progress)
-st.write(
-    f"You have annotated {progress['done'].notnull().sum()} out of {len(progress)} items."
-)
-st.write(f"next item id: {next_item_id}")
+st.write(f"Next item selected in {timeit(time_start)} ms")
+
 if next_item_id is None:
     st.success("You have completed all your annotations. Thank you!")
     st.success(
@@ -266,20 +279,31 @@ if next_item_id is None:
     )
     st.stop()
 
+time_start = time_before()
 note = notes.loc[next_item_id]
 image_path = os.path.join(IMAGE_FOLDER, note["image_name"])
+st.write(f"Note loaded in {timeit(time_start)} ms")
+
+time_start = time_before()
 image_data = conn.fs.open(image_path, "rb").read()
+st.write(f"Image loaded in {timeit(time_start)} ms")
+
 # image = Image.open(io.BytesIO(image_data))
 # image_width, image_height = image.size
 # height = max(800, image_height)
 # width = int((height / image_height) * image_width)
 
+time_start = time_before()
 item_number = get_item_number(progress=progress)
+st.write(f"Item number calculated in {timeit(time_start)} ms")
+
+time_start = time_before()
 st.header(f"Annotating item {item_number} out of {len(progress)}")
 st.image(
     image_data,
     caption="Image to annotate",
 )
+st.write(f"Image displayed in {timeit(time_start)} ms")
 
 
 with st.form("annotation_form", clear_on_submit=True):
