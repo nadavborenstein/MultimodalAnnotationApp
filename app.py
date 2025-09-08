@@ -175,7 +175,7 @@ def collect_selected_labels() -> list:
     return selected_labels
 
 
-def confirm_label(progress: pd.DataFrame, note: pd.Series):
+def confirm_label(note: pd.Series):
     """
     Confirm the selected label and update the progress.
     """
@@ -186,10 +186,10 @@ def confirm_label(progress: pd.DataFrame, note: pd.Series):
         return
 
     index = note[ID_COL]
-    progress.at[index, "done"] = True
-    progress.at[index, "label"] = str(selected_labels)
+    st.session_state.progress.at[index, "done"] = True
+    st.session_state.progress.at[index, "label"] = str(selected_labels)
     clear_selections()
-    s = progress.to_csv(index=False)
+    s = st.session_state.progress.to_csv(index=False)
     conn.fs.open(progress_file, "w").write(s)
     append_to_file(index, DONE_FILE)
 
@@ -366,10 +366,10 @@ with col2:
 st.header("No emotion")
 st.checkbox("No emotion", key="none")
 
+
 st.button(
     "Confirm",
-    on_click=lambda: confirm_label(progress=st.session_state.progress, note=note),
+    on_click=lambda: confirm_label(note=note),
     key="confirm_button",
     disabled=not collect_selected_labels(),
-    help="Please select at least one emotion before confirming.",
 )
