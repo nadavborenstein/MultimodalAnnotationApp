@@ -14,7 +14,7 @@ conn = st.connection("gcs", type=FilesConnection)
 
 
 NOTES = "annotation-experiment/data/tweets_with_images.csv"
-MAX_ANNOTATIONS_PER_WORKER = 20  # TODO: adjust as needed
+MAX_ANNOTATIONS_PER_WORKER = 25  # TODO: adjust as needed
 ID_COL = "tweetId"
 IMAGE_FOLDER = "annotation-experiment/static/resized_images/"
 PROGRESS_FOLDER = "annotation-experiment/data/worker_progress"
@@ -34,6 +34,7 @@ LABEL_COLOURS = {
     "ridicule": "blue",
     "none": "grey",
 }
+DEBUGGING = True
 
 INSTRUCTIONS = """
     Please read the following instructions carefully before proceeding with the annotation task.
@@ -101,7 +102,8 @@ def load_notes() -> pd.DataFrame:
     image_names = [os.path.basename(img) for img in images]
     notes = notes[notes["image_name"].isin(image_names)]
     notes = notes.drop_duplicates(subset=["image_name"])
-    notes = notes.head(20)
+    if DEBUGGING:
+        notes = notes.head(25)
     notes.set_index(ID_COL, inplace=True, drop=False)
     return notes
 
@@ -284,7 +286,12 @@ elif st.session_state.consent == "No":
     st.error("You have chosen not to participate in the study.")
     record_non_participation()
     st.error(
-        "please copy and paste the following code into Prolific to confirm your choice: CAOIUYYS"
+        "Click on the link below or copy and paste the following code into Prolific to confirm your choice: C1B7DNHB"
+    )
+    st.link_button(
+        "Back to Prolific",
+        "https://app.prolific.com/submissions/complete?cc=C1B7DNHB",
+        type="primary",
     )
     st.stop()
 else:
@@ -336,7 +343,12 @@ with st.spinner("**Loading images...**", show_time=True):
 if next_item_id is None:
     st.success("You have completed all your annotations. Thank you!")
     st.success(
-        "Copy and paste the following code into Prolific to receive credit: CGDTTW1Q"
+        "Click on the link below or copy and paste the following code into Prolific to receive credit: CV8TK0ZL"
+    )
+    st.link_button(
+        "back to Prolific",
+        "https://app.prolific.com/submissions/complete?cc=CV8TK0ZL",
+        type="primary",
     )
     st.stop()
 
