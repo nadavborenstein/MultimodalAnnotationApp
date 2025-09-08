@@ -188,7 +188,7 @@ def confirm_label(progress: pd.DataFrame, note: pd.Series):
     index = note[ID_COL]
     progress.at[index, "done"] = True
     progress.at[index, "label"] = str(selected_labels)
-    # clear_selections()
+    clear_selections()
     s = progress.to_csv(index=False)
     conn.fs.open(progress_file, "w").write(s)
     append_to_file(index, DONE_FILE)
