@@ -323,37 +323,53 @@ st.image(
 st.write(f"Image displayed in {timeit(time_start)} ms")
 
 
-with st.form("annotation_form", clear_on_submit=True):
-    col1, col2 = st.columns(2)
-    with col1:
-        st.header("Positive Emotions")
-        for emotion in POSITIVE_EMOTIONS:
-            st.checkbox(emotion.capitalize(), key=emotion)
+# with st.form("annotation_form", clear_on_submit=True):
+#     col1, col2 = st.columns(2)
+#     with col1:
+#         st.header("Positive Emotions")
+#         for emotion in POSITIVE_EMOTIONS:
+#             st.checkbox(emotion.capitalize(), key=emotion)
 
-        st.text_input("Other positive emotions (comma separated)", key="other_positive")
+#         st.text_input("Other positive emotions (comma separated)", key="other_positive")
 
-    with col2:
-        st.header("Negative Emotions")
-        for emotion in NEGATIVE_EMOTIONS:
-            st.checkbox(emotion.capitalize(), key=emotion)
-        st.text_input("Other negative emotions (comma separated)", key="other_negative")
+#     with col2:
+#         st.header("Negative Emotions")
+#         for emotion in NEGATIVE_EMOTIONS:
+#             st.checkbox(emotion.capitalize(), key=emotion)
+#         st.text_input("Other negative emotions (comma separated)", key="other_negative")
 
-    st.header("No emotion")
-    st.checkbox("No emotion", key="none")
+#     st.header("No emotion")
+#     st.checkbox("No emotion", key="none")
 
-    submitted = st.form_submit_button(
-        "Submit", on_click=confirm_label(progress=st.session_state.progress, note=note)
-    )
-    if submitted:
-        if not collect_selected_labels():
-            st.warning("Please select at least one emotion before submitting.")
-            st.stop()
+#     submitted = st.form_submit_button(
+#         "Submit", on_click=confirm_label(progress=st.session_state.progress, note=note)
+#     )
+#     if submitted:
+#         if not collect_selected_labels():
+#             st.warning("Please select at least one emotion before submitting.")
+#             st.stop()
 
+col1, col2 = st.columns(2)
+with col1:
+    st.header("Positive Emotions")
+    for emotion in POSITIVE_EMOTIONS:
+        st.checkbox(emotion.capitalize(), key=emotion)
 
-# st.button(
-#     "Confirm",
-#     on_click=lambda: confirm_label(progress=progress, note=note),
-#     key="confirm_button",
-#     disabled=not collect_selected_labels(),
-#     help="Please select at least one emotion before confirming.",
-# )
+    st.text_input("Other positive emotions (comma separated)", key="other_positive")
+
+with col2:
+    st.header("Negative Emotions")
+    for emotion in NEGATIVE_EMOTIONS:
+        st.checkbox(emotion.capitalize(), key=emotion)
+    st.text_input("Other negative emotions (comma separated)", key="other_negative")
+
+st.header("No emotion")
+st.checkbox("No emotion", key="none")
+
+st.button(
+    "Confirm",
+    on_click=lambda: confirm_label(progress=st.session_state.progress, note=note),
+    key="confirm_button",
+    disabled=not collect_selected_labels(),
+    help="Please select at least one emotion before confirming.",
+)
