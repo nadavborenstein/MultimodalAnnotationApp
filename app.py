@@ -251,6 +251,33 @@ else:
     st.stop()
 
 
+st.header("Instructions")
+expander = st.expander("Instructions", expanded=True, icon="❗️")
+expander.markdown(
+    """
+    Please read the following instructions carefully before proceeding with the annotation task.
+    
+    You will be shown a series of images extracted from tweets on X linked to misinformation. **Your task is to identify the emotions each image evokes.**
+    This is a subjective task, and there are no right or wrong answers. We are interested in your personal emotional response to each image.
+    
+    
+    
+    The possible emotions are categorized into positive and negative emotions. You can select multiple emotions for each image if you feel that more than one emotion is present.
+    In particular, you will be asked to identify the presence of the following emotions:
+    - **Positive Emotions**: Hope, Joy, Pride, Curiosity
+    - **Negative Emotions**: Fear, Anger, Sadness, Ridicule
+    - **No Emotion**: If you believe that the image does not evoke any emotion.
+    
+    Additionally, there are text boxes where you can specify any other positive or negative emotions that you feel are relevant but not listed above.
+    
+    **Occasionally, images may contain text.** In such cases, please focus on the overall emotional impact of both the image and textual content.
+
+    """
+)
+
+notes = load_notes()
+st.session_state.progress = get_worker_session(st.session_state.worker_id, notes=notes)
+
 with st.sidebar:
     st.header("Progress")
     done = st.session_state.progress["done"].notnull().sum()
@@ -278,32 +305,6 @@ with st.sidebar:
         """
     )
 
-st.header("Instructions")
-expander = st.expander("Instructions", expanded=True, icon="❗️")
-expander.markdown(
-    """
-    Please read the following instructions carefully before proceeding with the annotation task.
-    
-    You will be shown a series of images extracted from tweets on X linked to misinformation. **Your task is to identify the emotions each image evokes.**
-    This is a subjective task, and there are no right or wrong answers. We are interested in your personal emotional response to each image.
-    
-    
-    
-    The possible emotions are categorized into positive and negative emotions. You can select multiple emotions for each image if you feel that more than one emotion is present.
-    In particular, you will be asked to identify the presence of the following emotions:
-    - **Positive Emotions**: Hope, Joy, Pride, Curiosity
-    - **Negative Emotions**: Fear, Anger, Sadness, Ridicule
-    - **No Emotion**: If you believe that the image does not evoke any emotion.
-    
-    Additionally, there are text boxes where you can specify any other positive or negative emotions that you feel are relevant but not listed above.
-    
-    **Occasionally, images may contain text.** In such cases, please focus on the overall emotional impact of both the image and textual content.
-
-    """
-)
-
-notes = load_notes()
-st.session_state.progress = get_worker_session(st.session_state.worker_id, notes=notes)
 images = loading_images(st.session_state.progress["image_name"].tolist())
 next_item_id = select_next_item_for_worker_id(st.session_state.progress)
 
