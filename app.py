@@ -232,8 +232,10 @@ st.radio(
 
 if st.session_state.consent == "Yes":
     st.session_state.show_consent = False
-    st.success("Thank you for consenting to participate in the study.")
-    st.write("You can now proceed with the annotation task.")
+    st.success(
+        "Thank you for consenting to participate in the study.\nYou can now proceed with the annotation task.\nPlease read the instructions carefully before proceeding."
+    )
+    # st.write("You can now proceed with the annotation task.")
     # Here you can add the code to display the annotation task
 elif st.session_state.consent == "No":
     # hide the rest of the page
