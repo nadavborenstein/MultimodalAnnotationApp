@@ -23,10 +23,26 @@ NON_PARTICIPANTS_FILE = "annotation-experiment/data/non_participants.txt"
 NUM_ANNOTATORS_PER_ITEM = 3  # TODO: adjust as needed
 POSITIVE_EMOTIONS = ["hope", "joy", "pride", "curiosity"]
 NEGATIVE_EMOTIONS = ["fear", "anger", "sadness", "ridicule"]
+LABEL_COLOURS = {
+    "hope": "red",
+    "joy": "orange",
+    "pride": "green",
+    "curiosity": "blue",
+    "fear": "green",
+    "anger": "violet",
+    "sadness": "orange",
+    "ridicule": "blue",
+    "none": "grey",
+}
 
 
 def time_before():
     return int(time() * 1000)
+
+
+def my_badge(label: str) -> str:
+    colour = LABEL_COLOURS.get(label, "grey")
+    return f":{colour}-badge[{label}]"
 
 
 def timeit(start_time):
@@ -76,7 +92,7 @@ def load_done() -> set:
 
 
 @st.cache_data
-def loading_images(image_names) -> list:
+def load_images(image_names) -> list:
     images = dict()
     for image_name in image_names:
         image_path = os.path.join(IMAGE_FOLDER, image_name)
@@ -275,8 +291,11 @@ expander.markdown(
     """
 )
 
-notes = load_notes()
-st.session_state.progress = get_worker_session(st.session_state.worker_id, notes=notes)
+with st.spinner("Loading your annotation session...", show_time=True):
+    notes = load_notes()
+    st.session_state.progress = get_worker_session(
+        st.session_state.worker_id, notes=notes
+    )
 
 with st.sidebar:
     st.header("Progress")
@@ -289,7 +308,7 @@ with st.sidebar:
     st.header("Your selections")
     selected_labels = collect_selected_labels()
     if selected_labels:
-        st.write(", ".join(selected_labels))
+        st.markdown(" ".join([my_badge(label) for label in selected_labels]))
     else:
         st.write("No labels selected yet.")
 
@@ -305,8 +324,9 @@ with st.sidebar:
         """
     )
 
-images = loading_images(st.session_state.progress["image_name"].tolist())
-next_item_id = select_next_item_for_worker_id(st.session_state.progress)
+with st.spinner("Loading images...", show_time=True):
+    images = load_images(st.session_state.progress["image_name"].tolist())
+    next_item_id = select_next_item_for_worker_id(st.session_state.progress)
 
 if next_item_id is None:
     st.success("You have completed all your annotations. Thank you!")
@@ -340,7 +360,7 @@ with container:
     with annotation_col:
         col1, col2 = st.columns(2)
         with col1:
-            st.header("Positive Emotions")
+            st.subheader("Positive Emotions")
             for emotion in POSITIVE_EMOTIONS:
                 st.checkbox(emotion.capitalize(), key=emotion)
 
@@ -349,20 +369,22 @@ with container:
             )
 
         with col2:
-            st.header("Negative Emotions")
+            st.subheader("Negative Emotions")
             for emotion in NEGATIVE_EMOTIONS:
                 st.checkbox(emotion.capitalize(), key=emotion)
             st.text_input(
                 "Other negative emotions (comma separated)", key="other_negative"
             )
 
-        st.header("No emotion")
+        st.subheader("No emotion")
         st.checkbox("No emotion", key="none")
 
 
 st.button(
-    "Confirm",
+    "**Confirm**",
     on_click=lambda: confirm_label(note=note),
     key="confirm_button",
     disabled=not collect_selected_labels(),
+    use_container_width=True,
+    type="primary",
 )
