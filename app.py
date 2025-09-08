@@ -288,6 +288,7 @@ st.write(f"All images loaded in {timeit(time_start)} ms")
 
 time_start = time_before()
 next_item_id = select_next_item_for_worker_id(st.session_state.progress)
+st.write("next item id:", next_item_id)
 st.write(f"Next item selected in {timeit(time_start)} ms")
 
 if next_item_id is None:
