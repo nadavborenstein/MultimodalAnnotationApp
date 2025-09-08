@@ -84,7 +84,7 @@ def read_all_images(image_names) -> list:
     return images
 
 
-@st.cache_data
+@st.cache_resource
 def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
     # check if a progress file exists for this worker
     progress_file = f"{PROGRESS_FOLDER}/progress_{worker_id}.csv"
@@ -233,7 +233,7 @@ st.radio(
 if st.session_state.consent == "Yes":
     st.session_state.show_consent = False
     st.success(
-        "Thank you for consenting to participate in the study.\nYou can now proceed with the annotation task.\nPlease read the instructions carefully before proceeding."
+        "Thank you for consenting to participate in the study. You can now proceed with the annotation task. Please read the instructions carefully before proceeding.\n\nIt may take a few seconds for the images to load."
     )
     # st.write("You can now proceed with the annotation task.")
     # Here you can add the code to display the annotation task
