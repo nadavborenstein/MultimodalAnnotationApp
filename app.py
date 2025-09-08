@@ -74,6 +74,18 @@ def load_done() -> set:
     return done
 
 
+st.cache_data
+
+
+def read_all_images(image_names) -> list:
+    images = dict()
+    for image_name in image_names:
+        image_path = os.path.join(IMAGE_FOLDER, image_name)
+        image_data = conn.fs.open(image_path, "rb").read()
+        images[image_name] = image_data
+    return images
+
+
 def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
     # check if a progress file exists for this worker
     progress_file = f"{PROGRESS_FOLDER}/progress_{worker_id}.csv"
@@ -97,6 +109,7 @@ def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
                 "worker_id": [worker_id] * len(ids_to_label),
                 "done": [None] * len(ids_to_label),
                 "label": [None] * len(ids_to_label),
+                "image_name": notes_to_label["image_name"].tolist(),
             }
         )
         progress.set_index(ID_COL, inplace=True, drop=False)
@@ -269,6 +282,10 @@ progress = get_worker_session(st.session_state.worker_id, notes=notes)
 st.write(f"Progress loaded in {timeit(time_start)} ms")
 
 time_start = time_before()
+images = read_all_images(progress["image_name"].tolist())
+st.write(f"All images loaded in {timeit(time_start)} ms")
+
+time_start = time_before()
 next_item_id = select_next_item_for_worker_id(progress)
 st.write(f"Next item selected in {timeit(time_start)} ms")
 
@@ -281,11 +298,12 @@ if next_item_id is None:
 
 time_start = time_before()
 note = notes.loc[next_item_id]
-image_path = os.path.join(IMAGE_FOLDER, note["image_name"])
-st.write(f"Note loaded in {timeit(time_start)} ms")
+# image_path = os.path.join(IMAGE_FOLDER, note["image_name"])
+# st.write(f"Note loaded in {timeit(time_start)} ms")
 
 time_start = time_before()
-image_data = conn.fs.open(image_path, "rb").read()
+# image_data = conn.fs.open(image_path, "rb").read()
+image_data = images[note["image_name"]]
 st.write(f"Image loaded in {timeit(time_start)} ms")
 
 # image = Image.open(io.BytesIO(image_data))
@@ -324,13 +342,13 @@ with st.form("annotation_form", clear_on_submit=True):
     st.header("No emotion")
     st.checkbox("No emotion", key="none")
 
-    submitted = st.form_submit_button("Submit")
+    submitted = st.form_submit_button(
+        "Submit", on_click=confirm_label(progress=progress, note=note)
+    )
     if submitted:
         if not collect_selected_labels():
             st.warning("Please select at least one emotion before submitting.")
-        else:
-            confirm_label(progress=progress, note=note)
-            st.rerun()
+            st.stop()
 
 
 # st.button(
