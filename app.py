@@ -324,7 +324,7 @@ with st.sidebar:
         """
     )
 
-with st.spinner("Loading images...", show_time=True):
+with st.spinner("**Loading images...**", show_time=True):
     images = load_images(st.session_state.progress["image_name"].tolist())
     next_item_id = select_next_item_for_worker_id(st.session_state.progress)
 
