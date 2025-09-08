@@ -35,6 +35,31 @@ LABEL_COLOURS = {
     "none": "grey",
 }
 
+INSTRUCTIONS = """
+    Please read the following instructions carefully before proceeding with the annotation task.
+    
+    We study the way images and photos are used by X (formerly known as Twitter) to spread misinformation online.
+    Misinformation can have serious consequences, including influencing public opinion, undermining trust in institutions, and even inciting violence. 
+    By understanding how images are used in misinformation, we can develop better strategies to combat its spread and mitigate its impact.
+    
+    **In particular, in this study we wish to analyse the emotions that are evoked by images linked to misinformation.**
+    You will be shown a series of images extracted from tweets on X that spread misinformation. **Your task is to identify the emotions each image evokes.** That is, how the image makes you feel.
+    This is a subjective task, and there are no right or wrong answers. We are interested in your personal emotional response to each image.
+    
+    
+    The possible emotions are categorized into positive and negative emotions. You can select multiple emotions for each image if you feel that more than one emotion is present.
+    In particular, you will be asked to identify the presence of the following emotions:
+    - **Positive Emotions**: Hope, Joy, Pride, Curiosity
+    - **Negative Emotions**: Fear, Anger, Sadness, Ridicule
+    - **No Emotion**: If you believe that the image does not evoke any emotion.
+    
+    Additionally, there are text boxes where you can specify other positive or negative emotions that you feel are relevant but not listed above.
+    
+    **Occasionally, images may contain text.** In such cases, please focus on the overall emotional impact of both the image and textual content.
+    
+    Please take your time to carefully consider each image and select the emotions that you feel are most appropriate. **You can opt out of this study at any time with no negative consequences.**
+    """
+
 
 def time_before():
     return int(time() * 1000)
@@ -269,27 +294,7 @@ else:
 
 st.header("Instructions")
 expander = st.expander("Instructions", expanded=True, icon="❗️")
-expander.markdown(
-    """
-    Please read the following instructions carefully before proceeding with the annotation task.
-    
-    You will be shown a series of images extracted from tweets on X linked to misinformation. **Your task is to identify the emotions each image evokes.**
-    This is a subjective task, and there are no right or wrong answers. We are interested in your personal emotional response to each image.
-    
-    
-    
-    The possible emotions are categorized into positive and negative emotions. You can select multiple emotions for each image if you feel that more than one emotion is present.
-    In particular, you will be asked to identify the presence of the following emotions:
-    - **Positive Emotions**: Hope, Joy, Pride, Curiosity
-    - **Negative Emotions**: Fear, Anger, Sadness, Ridicule
-    - **No Emotion**: If you believe that the image does not evoke any emotion.
-    
-    Additionally, there are text boxes where you can specify any other positive or negative emotions that you feel are relevant but not listed above.
-    
-    **Occasionally, images may contain text.** In such cases, please focus on the overall emotional impact of both the image and textual content.
-
-    """
-)
+expander.markdown(INSTRUCTIONS)
 
 with st.spinner("Loading your annotation session...", show_time=True):
     notes = load_notes()
