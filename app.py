@@ -9,13 +9,14 @@ from PIL import Image
 from collections import Counter
 from time import time
 
+st.set_page_config(layout="wide")
 conn = st.connection("gcs", type=FilesConnection)
 
 
 NOTES = "annotation-experiment/data/tweets_with_images.csv"
 MAX_ANNOTATIONS_PER_WORKER = 20  # TODO: adjust as needed
 ID_COL = "tweetId"
-IMAGE_FOLDER = "annotation-experiment/static/images/"
+IMAGE_FOLDER = "annotation-experiment/static/resized_images/"
 PROGRESS_FOLDER = "annotation-experiment/data/worker_progress"
 DONE_FILE = "annotation-experiment/data/done.txt"
 NON_PARTICIPANTS_FILE = "annotation-experiment/data/non_participants.txt"
@@ -233,10 +234,10 @@ st.radio(
 if st.session_state.consent == "Yes":
     st.session_state.show_consent = False
     st.success(
-        "Thank you for consenting to participate in the study. You can now proceed with the annotation task. Please read the instructions carefully before proceeding.\n\n**It may take a few seconds for the images to load.**"
+        "Thank you for consenting to participate in the study. You can now proceed with the annotation task. Please read the instructions carefully before proceeding."
     )
-    # st.write("You can now proceed with the annotation task.")
-    # Here you can add the code to display the annotation task
+    st.warning("**It may take a few seconds for the images to load.**")
+
 elif st.session_state.consent == "No":
     # hide the rest of the page
     st.error("You have chosen not to participate in the study.")
@@ -292,19 +293,10 @@ note = notes.loc[next_item_id]
 
 image_data = images[note["image_name"]]
 
-# image = Image.open(io.BytesIO(image_data))
-# image_width, image_height = image.size
-# height = max(800, image_height)
-# width = int((height / image_height) * image_width)
 
 item_number = get_item_number(progress=st.session_state.progress)
 
 st.header(f"Annotating item {item_number} out of {len(st.session_state.progress)}")
-st.image(
-    image_data,
-    caption="Image to annotate",
-)
-
 
 # with st.form("annotation_form", clear_on_submit=True):
 #     col1, col2 = st.columns(2)
@@ -332,22 +324,38 @@ st.image(
 #             st.warning("Please select at least one emotion before submitting.")
 #             st.stop()
 
-col1, col2 = st.columns(2)
-with col1:
-    st.header("Positive Emotions")
-    for emotion in POSITIVE_EMOTIONS:
-        st.checkbox(emotion.capitalize(), key=emotion)
 
-    st.text_input("Other positive emotions (comma separated)", key="other_positive")
+container = st.container(
+    height=650,
+    horizontal_alignment="center",
+    horizontal=True,
+)
+with container:
+    image_col, annotation_col = st.columns([3, 2])
+    with image_col:
+        st.image(image_data, caption="Image to annotate")
 
-with col2:
-    st.header("Negative Emotions")
-    for emotion in NEGATIVE_EMOTIONS:
-        st.checkbox(emotion.capitalize(), key=emotion)
-    st.text_input("Other negative emotions (comma separated)", key="other_negative")
+    with annotation_col:
+        col1, col2 = st.columns(2)
+        with col1:
+            st.header("Positive Emotions")
+            for emotion in POSITIVE_EMOTIONS:
+                st.checkbox(emotion.capitalize(), key=emotion)
 
-st.header("No emotion")
-st.checkbox("No emotion", key="none")
+            st.text_input(
+                "Other positive emotions (comma separated)", key="other_positive"
+            )
+
+        with col2:
+            st.header("Negative Emotions")
+            for emotion in NEGATIVE_EMOTIONS:
+                st.checkbox(emotion.capitalize(), key=emotion)
+            st.text_input(
+                "Other negative emotions (comma separated)", key="other_negative"
+            )
+
+        st.header("No emotion")
+        st.checkbox("No emotion", key="none")
 
 
 st.button(
