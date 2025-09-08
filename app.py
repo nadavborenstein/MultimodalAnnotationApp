@@ -74,9 +74,7 @@ def load_done() -> set:
     return done
 
 
-st.cache_data
-
-
+@st.cache_data
 def read_all_images(image_names) -> list:
     images = dict()
     for image_name in image_names:
