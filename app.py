@@ -84,6 +84,7 @@ def read_all_images(image_names) -> list:
     return images
 
 
+@st.cache_data
 def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
     # check if a progress file exists for this worker
     progress_file = f"{PROGRESS_FOLDER}/progress_{worker_id}.csv"
@@ -276,15 +277,15 @@ notes = load_notes()
 st.write(f"Notes loaded in {timeit(time_start)} ms")
 
 time_start = time_before()
-progress = get_worker_session(st.session_state.worker_id, notes=notes)
+st.session_state.progress = get_worker_session(st.session_state.worker_id, notes=notes)
 st.write(f"Progress loaded in {timeit(time_start)} ms")
 
 time_start = time_before()
-images = read_all_images(progress["image_name"].tolist())
+images = read_all_images(st.session_state.progress["image_name"].tolist())
 st.write(f"All images loaded in {timeit(time_start)} ms")
 
 time_start = time_before()
-next_item_id = select_next_item_for_worker_id(progress)
+next_item_id = select_next_item_for_worker_id(st.session_state.progress)
 st.write(f"Next item selected in {timeit(time_start)} ms")
 
 if next_item_id is None:
@@ -310,11 +311,11 @@ st.write(f"Image loaded in {timeit(time_start)} ms")
 # width = int((height / image_height) * image_width)
 
 time_start = time_before()
-item_number = get_item_number(progress=progress)
+item_number = get_item_number(progress=st.session_state.progress)
 st.write(f"Item number calculated in {timeit(time_start)} ms")
 
 time_start = time_before()
-st.header(f"Annotating item {item_number} out of {len(progress)}")
+st.header(f"Annotating item {item_number} out of {len(st.session_state.progress)}")
 st.image(
     image_data,
     caption="Image to annotate",
@@ -341,7 +342,7 @@ with st.form("annotation_form", clear_on_submit=True):
     st.checkbox("No emotion", key="none")
 
     submitted = st.form_submit_button(
-        "Submit", on_click=confirm_label(progress=progress, note=note)
+        "Submit", on_click=confirm_label(progress=st.session_state.progress, note=note)
     )
     if submitted:
         if not collect_selected_labels():
