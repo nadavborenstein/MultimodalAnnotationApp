@@ -251,6 +251,33 @@ else:
     st.stop()
 
 
+with st.sidebar:
+    st.header("Progress")
+    done = st.session_state.progress["done"].notnull().sum()
+    total = len(st.session_state.progress)
+    st.progress(done / total)
+    st.write(f"You have annotated {done} out of {total} items.")
+
+    st.markdown("---")
+    st.header("Your selections")
+    selected_labels = collect_selected_labels()
+    if selected_labels:
+        st.write(", ".join(selected_labels))
+    else:
+        st.write("No labels selected yet.")
+
+    st.markdown("---")
+    st.header("Quick instructions")
+    st.markdown(
+        """
+        - Select all emotions that you feel are evoked by the image.
+        - You can select multiple emotions.
+        - If none of the listed emotions apply, you can specify other emotions in the text boxes.
+        - If you feel that the image does not evoke any emotion, select "No emotion".
+        - Once you are satisfied with your selections, click the "Confirm" button to proceed to the next image.
+        """
+    )
+
 st.header("Instructions")
 expander = st.expander("Instructions", expanded=True, icon="❗️")
 expander.markdown(
@@ -297,33 +324,6 @@ image_data = images[note["image_name"]]
 item_number = get_item_number(progress=st.session_state.progress)
 
 st.header(f"Annotating item {item_number} out of {len(st.session_state.progress)}")
-
-with st.sidebar:
-    st.header("Progress")
-    done = st.session_state.progress["done"].notnull().sum()
-    total = len(st.session_state.progress)
-    st.progress(done / total)
-    st.write(f"You have annotated {done} out of {total} items.")
-
-    st.markdown("---")
-    st.header("Your selections")
-    selected_labels = collect_selected_labels()
-    if selected_labels:
-        st.write(", ".join(selected_labels))
-    else:
-        st.write("No labels selected yet.")
-
-    st.markdown("---")
-    st.header("Instructions")
-    st.markdown(
-        """
-        - Select all emotions that you feel are evoked by the image.
-        - You can select multiple emotions.
-        - If none of the listed emotions apply, you can specify other emotions in the text boxes.
-        - If you feel that the image does not evoke any emotion, select "No emotion".
-        - Once you are satisfied with your selections, click the "Confirm" button to proceed to the next image.
-        """
-    )
 
 
 container = st.container(
