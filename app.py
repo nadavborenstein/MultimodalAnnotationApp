@@ -76,7 +76,7 @@ def load_done() -> set:
 
 
 @st.cache_data
-def read_all_images(image_names) -> list:
+def loading_images(image_names) -> list:
     images = dict()
     for image_name in image_names:
         image_path = os.path.join(IMAGE_FOLDER, image_name)
@@ -236,7 +236,7 @@ if st.session_state.consent == "Yes":
     st.success(
         "Thank you for consenting to participate in the study. You can now proceed with the annotation task. Please read the instructions carefully before proceeding."
     )
-    st.warning("**It may take a few seconds for the images to load.**")
+    st.warning("**It may take up to 20 seconds for the images to load.**")
 
 elif st.session_state.consent == "No":
     # hide the rest of the page
@@ -277,7 +277,7 @@ expander.markdown(
 
 notes = load_notes()
 st.session_state.progress = get_worker_session(st.session_state.worker_id, notes=notes)
-images = read_all_images(st.session_state.progress["image_name"].tolist())
+images = loading_images(st.session_state.progress["image_name"].tolist())
 next_item_id = select_next_item_for_worker_id(st.session_state.progress)
 
 if next_item_id is None:
@@ -298,31 +298,32 @@ item_number = get_item_number(progress=st.session_state.progress)
 
 st.header(f"Annotating item {item_number} out of {len(st.session_state.progress)}")
 
-# with st.form("annotation_form", clear_on_submit=True):
-#     col1, col2 = st.columns(2)
-#     with col1:
-#         st.header("Positive Emotions")
-#         for emotion in POSITIVE_EMOTIONS:
-#             st.checkbox(emotion.capitalize(), key=emotion)
+with st.sidebar:
+    st.header("Progress")
+    done = st.session_state.progress["done"].notnull().sum()
+    total = len(st.session_state.progress)
+    st.progress(done / total)
+    st.write(f"You have annotated {done} out of {total} items.")
 
-#         st.text_input("Other positive emotions (comma separated)", key="other_positive")
+    st.markdown("---")
+    st.header("Your selections")
+    selected_labels = collect_selected_labels()
+    if selected_labels:
+        st.write(", ".join(selected_labels))
+    else:
+        st.write("No labels selected yet.")
 
-#     with col2:
-#         st.header("Negative Emotions")
-#         for emotion in NEGATIVE_EMOTIONS:
-#             st.checkbox(emotion.capitalize(), key=emotion)
-#         st.text_input("Other negative emotions (comma separated)", key="other_negative")
-
-#     st.header("No emotion")
-#     st.checkbox("No emotion", key="none")
-
-#     submitted = st.form_submit_button(
-#         "Submit", on_click=confirm_label(progress=st.session_state.progress, note=note)
-#     )
-#     if submitted:
-#         if not collect_selected_labels():
-#             st.warning("Please select at least one emotion before submitting.")
-#             st.stop()
+    st.markdown("---")
+    st.header("Instructions")
+    st.markdown(
+        """
+        - Select all emotions that you feel are evoked by the image.
+        - You can select multiple emotions.
+        - If none of the listed emotions apply, you can specify other emotions in the text boxes.
+        - If you feel that the image does not evoke any emotion, select "No emotion".
+        - Once you are satisfied with your selections, click the "Confirm" button to proceed to the next image.
+        """
+    )
 
 
 container = st.container(
