@@ -16,6 +16,10 @@ conn = st.connection("gcs", type=FilesConnection)
 LANGUAGE = "de"
 TASK_NAME = f"visual_evidence_head_{LANGUAGE}"
 NOTES = "annotation-experiment/data/multimodal_tweets_balanced.csv"
+
+ADD_QUALIFICATIONS = True
+QUALIFICATION_NOTES = "annotation-experiment/data/en_qualification_data.csv"
+QUALIFICATION_IMAGE_FOLDER = "annotation-experiment/static/qualification_images/"
 MAX_ANNOTATIONS_PER_WORKER = 25  # TODO: adjust as needed
 ID_COL = "tweet_id"
 IMAGE_FOLDER = "annotation-experiment/static/resized_images/"
@@ -41,7 +45,7 @@ QUESTION_OPTIONS = {
     ],
     "real_source": [
         "The image originate from a reliable and verified source",
-        "The image **does not** originate from a reliable, verified, source (imposter, satire, etc.)",
+        "The image **does not** originate from a reliable, verified, source (imposter, satire, unknown, etc.)",
         "I don't know/not relevant",
     ],
     "tweet_text": [
@@ -88,7 +92,7 @@ INSTRUCTIONS = """
     A **non-genuine** image is a fake (e.g., AI generated, forged document) or altered image (cropped, photoshoped, etc.,) that is not disclosed as such, with the purpose of misleading. If the image is not genuine, please explain how.
     
     2. **Does the image originate from a reliable and verified source?** 
-    Here we refer specifically to the original creator of the image content. A source is considered unreliable if it lacks credibility or authority, such as impersonators or satirical platforms. If the source is not reliable, please explain how.
+    Here we refer specifically to the original creator of the image content. A source is considered unreliable if it lacks credibility or authority, such as impersonators, satirical platforms, or unknown origins. If the source is not reliable, please explain how.
     
     3. **Does the claim in the tweet's text faithfully represent the content of the image?** 
     Read the tweet text and evaluate whether the claim made in the tweet accurately reflects the content of the attached image. If it does not, please explain how.
@@ -160,6 +164,17 @@ def load_notes() -> pd.DataFrame:
     notes.set_index(ID_COL, inplace=True, drop=False)
     return notes
 
+@st.cache_resource
+def load_qualification_notes() -> pd.DataFrame:
+    notes = conn.fs.open(QUALIFICATION_NOTES, "r").read()
+    notes = pd.read_csv(io.StringIO(notes))
+    images = conn.fs.glob(f"{QUALIFICATION_IMAGE_FOLDER}*.jpeg")
+    image_names = [os.path.basename(img) for img in images]
+    notes = notes[notes["image_name"].isin(image_names)]
+    notes = notes.drop_duplicates(subset=["image_name"])
+    notes.set_index(ID_COL, inplace=True, drop=False)
+    return notes
+
 
 def load_done() -> set:
     if not conn.fs.exists(DONE_FILE):
@@ -202,6 +217,11 @@ def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
         notes_to_label = notes.sample(
             n=min(MAX_ANNOTATIONS_PER_WORKER, len(notes)), random_state=seed
         )
+        if ADD_QUALIFICATIONS:
+            qualification_notes = load_qualification_notes()
+            notes_to_label = pd.concat([notes_to_label, qualification_notes])
+            notes_to_label = notes_to_label.sample(frac=1, random_state=seed)
+            
         ids_to_label = notes_to_label.index.tolist()
         progress = pd.DataFrame(
             {
@@ -494,7 +514,7 @@ with image_focused:
         label_visibility="hidden",
     )
     st.text_input(
-        "In what way is the source not trustworthy?",
+        "In what way is the source not reliable?",
         key="real_source_text",
         placeholder="e.g., imposter, satire, etc.",
         disabled=st.session_state.real_source != QUESTION_OPTIONS["real_source"][1],
