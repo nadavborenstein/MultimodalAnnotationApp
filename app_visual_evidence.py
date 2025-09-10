@@ -325,7 +325,9 @@ if st.session_state.consent == "Yes":
     st.success(
         "Thank you for consenting to participate in the study. You can now proceed with the annotation task. Please read the instructions carefully before proceeding."
     )
-    st.warning("**It may take up to 20 seconds for the images to load.**")
+    st.warning(
+        "**It may take up to 20 seconds for the images to load. Please carefuly read the instructions in the meanwhile.**"
+    )
 
 elif st.session_state.consent == "No":
     # hide the rest of the page
