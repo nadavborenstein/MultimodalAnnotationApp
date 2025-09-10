@@ -150,6 +150,18 @@ def record_non_participation():
 
 
 @st.cache_resource
+def load_qualification_notes() -> pd.DataFrame:
+    notes = conn.fs.open(QUALIFICATION_NOTES, "r").read()
+    notes = pd.read_csv(io.StringIO(notes))
+    images = conn.fs.glob(f"{QUALIFICATION_IMAGE_FOLDER}*.jpeg")
+    image_names = [os.path.basename(img) for img in images]
+    notes = notes[notes["image_name"].isin(image_names)]
+    notes = notes.drop_duplicates(subset=["image_name"])
+    notes.set_index(ID_COL, inplace=True, drop=False)
+    return notes
+
+
+@st.cache_resource
 def load_notes() -> pd.DataFrame:
     notes = conn.fs.open(NOTES, "r").read()
     notes = pd.read_csv(io.StringIO(notes))
@@ -162,17 +174,11 @@ def load_notes() -> pd.DataFrame:
     if DEBUGGING:
         notes = notes.head(25)
     notes.set_index(ID_COL, inplace=True, drop=False)
-    return notes
 
-@st.cache_resource
-def load_qualification_notes() -> pd.DataFrame:
-    notes = conn.fs.open(QUALIFICATION_NOTES, "r").read()
-    notes = pd.read_csv(io.StringIO(notes))
-    images = conn.fs.glob(f"{QUALIFICATION_IMAGE_FOLDER}*.jpeg")
-    image_names = [os.path.basename(img) for img in images]
-    notes = notes[notes["image_name"].isin(image_names)]
-    notes = notes.drop_duplicates(subset=["image_name"])
-    notes.set_index(ID_COL, inplace=True, drop=False)
+    if ADD_QUALIFICATIONS:
+        qualification_notes = load_qualification_notes()
+        notes = pd.concat([notes, qualification_notes])
+        notes["qualification"] = notes.index.isin(qualification_notes.index)
     return notes
 
 
@@ -214,14 +220,18 @@ def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
         done_notes = load_done()
         notes = notes[~notes.index.isin(done_notes)]
 
-        notes_to_label = notes.sample(
-            n=min(MAX_ANNOTATIONS_PER_WORKER, len(notes)), random_state=seed
-        )
         if ADD_QUALIFICATIONS:
-            qualification_notes = load_qualification_notes()
-            notes_to_label = pd.concat([notes_to_label, qualification_notes])
+            qualifications = notes[notes["qualification"]]
+            non_qualifications = notes[~notes["qualification"]].sample(
+                n=min(MAX_ANNOTATIONS_PER_WORKER, len(notes)), random_state=seed
+            )
+            notes_to_label = pd.concat([qualifications, non_qualifications])
             notes_to_label = notes_to_label.sample(frac=1, random_state=seed)
-            
+        else:
+            notes_to_label = notes.sample(
+                n=min(MAX_ANNOTATIONS_PER_WORKER, len(notes)), random_state=seed
+            )
+
         ids_to_label = notes_to_label.index.tolist()
         progress = pd.DataFrame(
             {
@@ -444,6 +454,7 @@ if next_item_id is None:
     st.stop()
 
 note = notes.loc[next_item_id]
+
 # image_path = os.path.join(IMAGE_FOLDER, note["image_name"])
 # st.write(f"Note loaded in {timeit(time_start)} ms")
 
