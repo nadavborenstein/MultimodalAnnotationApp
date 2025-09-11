@@ -13,9 +13,15 @@ import re
 st.set_page_config(layout="wide")
 conn = st.connection("gcs", type=FilesConnection)
 
-LANGUAGE = "de"
+LANGUAGE = "en"
 TASK_NAME = f"visual_evidence_head_{LANGUAGE}"
 NOTES = "annotation-experiment/data/multimodal_tweets_balanced.csv"
+
+DONE_CODE = "CV8TK0ZL"
+DONE_LINK = f"https://app.prolific.com/submissions/complete?cc={DONE_CODE}"
+NO_CONCENT_CODE = "C1B7DNHB"
+NO_CONCENT_LINK = f"https://app.prolific.com/submissions/complete?cc={NO_CONCENT_CODE}"
+
 
 ADD_QUALIFICATIONS = True
 QUALIFICATION_NOTES = "annotation-experiment/data/en_qualification_data.csv"
@@ -41,23 +47,27 @@ QUESTION_OPTIONS = {
     "real_image": [
         "The image is genuine",
         "The image is **not** genuine (e.g., edited or AI generated without disclosure)",
-        "I don't know/not relevant",
+        "Not relevant",
+        "I don't know",
     ],
     "real_source": [
         "The image originate from a reliable and verified source",
         "The image **does not** originate from a reliable, verified, source (imposter, satire, unknown, etc.)",
-        "I don't know/not relevant",
+        "Not relevant",
+        "I don't know",
     ],
     "tweet_text": [
-        "The claim in the tweet's text faithfully represent the content of the image",
+        "The claim in the tweet's text faithfully represents the content of the image",
         "The claim in the tweet's text **does not** faithfully represent the content of the image",
-        "I don't know/not relevant",
+        "Not relevant",
+        "I don't know",
     ],
     "embedded_text": [
         "There is no textual claim in the image",
-        "The claim in the image faithfully represent the visual content of the image",
+        "The claim in the image faithfully represents the visual content of the image",
         "The claim in the image **does not** faithfully represent the visual content of the image",
-        "I don't know/not relevant",
+        "Not relevant",
+        "I don't know",
     ],
     "cannot_annotate": [
         False,
@@ -70,9 +80,9 @@ DEBUGGING = True
 INSTRUCTIONS = """
     Please read the following instructions carefully before proceeding with the annotation task.
     
-    We are studying how images on X (formerly Twitter) are used to spread misinformation online.
-    Misinformation can have serious consequences, including shaping public opinion, eroding trust in institutions, and even incite violence.
-    By understanding how images are used to spread misinformation misinformation, we can develop better strategies to limit its impact.
+    We are studying how images on X (formerly Twitter) are used to spread misinformation online. 
+    Misinformation can have serious consequences, including shaping public opinion, eroding trust in institutions, and even inciting violence. 
+    By understanding how images are used to spread misinformation, we can develop better strategies to limit their impact.
     
     **In this study we wish to analyse high-level properties images and its relationship to claim in the tweet**. 
     
@@ -89,21 +99,21 @@ INSTRUCTIONS = """
             
     1. **Is the image genuine?** 
     A genuine image is an original image that was not altered without disclosure.
-    A **non-genuine** image is a fake (e.g., AI generated, forged document) or altered image (cropped, photoshoped, etc.,) that is not disclosed as such, with the purpose of misleading. If the image is not genuine, please explain how.
+    A **non-genuine** image is a fake (e.g., AI-generated, forged document) or altered image (cropped, photoshopped, etc.) that is not disclosed as such, with the purpose of misleading. In other words, the image/tweet was flagged as misinformation because the image itself is misinformation. If the image is not genuine, please explain how.
     
     2. **Does the image originate from a reliable and verified source?** 
-    Here we refer specifically to the original creator of the image content. A source is considered unreliable if it lacks credibility or authority, such as impersonators, satirical platforms, or unknown origins. If the source is not reliable, please explain how.
+    Here we refer specifically to the original creator of the image content. A source is considered unreliable if it lacks credibility or authority, such as impersonators, satirical platforms, or unknown origins. That is, the image/tweet was flagged as misinformation because the origin of the image is problematic. If the source is not reliable, please explain how. 
     
     3. **Does the claim in the tweet's text faithfully represent the content of the image?** 
-    Read the tweet text and evaluate whether the claim made in the tweet accurately reflects the content of the attached image. If it does not, please explain how.
+    Read the tweet text and evaluate whether the claim made in the tweet accurately reflects the content of the attached image. If it does not, please explain how. In other words, the image/tweet was flagged as misinformation because the tweet's author made a false claim regarding the image. If the text does not make a claim about the image, please select "The claim in the tweet's text faithfully represent the content of the image". If the text and the image are unrelated, please select "Not relevant".
     
     4. **If the image contains a textual claim, does the claim faithfully represent the visual content of the image?**
     If the image contains text (e.g., a screenshot of a tweet or news article, a meme, a document, etc.), read the text in the image and evaluate whether the claim made in the text accurately reflects the visual content of the image. If it does not, please explain how.
     
-    **Please answer the questions to the best of your ability.** If you are unsure about a question, or a question cannot be answered, select “I don't know/not relevant”.
+    **Please answer the questions to the best of your ability.** If you are unsure about a question, or a question cannot be answered, select “I don't know”. 
     If a tweet or image cannot be annotated (e.g., it is not misleading, or the claim is unclear), select “It is impossible to annotate this image” and briefly explain why.     
     
-    **Remember, You can opt out of this study at any time with no negative consequences.**
+    **Remember, you can opt out of this study at any time with no negative consequences.**
     """
 
 
@@ -364,11 +374,11 @@ elif st.session_state.consent == "No":
     st.error("You have chosen not to participate in the study.")
     record_non_participation()
     st.error(
-        "Click on the link below or copy and paste the following code into Prolific to confirm your choice: C1B7DNHB"
+        f"Click on the link below or copy and paste the following code into Prolific to confirm your choice: {NO_CONCENT_CODE}"
     )
     st.link_button(
         "Back to Prolific",
-        "https://app.prolific.com/submissions/complete?cc=C1B7DNHB",
+        NO_CONCENT_LINK,
         type="primary",
     )
     st.stop()
@@ -444,11 +454,11 @@ with st.spinner("**Loading images...**", show_time=True):
 if next_item_id is None:
     st.success("You have completed all your annotations. Thank you!")
     st.success(
-        "Click on the link below or copy and paste the following code into Prolific to receive credit: CV8TK0ZL"
+        f"Click on the link below or copy and paste the following code into Prolific to receive credit: {DONE_CODE}"
     )
     st.link_button(
         "back to Prolific",
-        "https://app.prolific.com/submissions/complete?cc=CV8TK0ZL",
+        DONE_LINK,
         type="primary",
     )
     st.stop()
