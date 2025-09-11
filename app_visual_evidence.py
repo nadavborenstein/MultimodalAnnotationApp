@@ -51,7 +51,7 @@ QUESTION_OPTIONS = {
         "I don't know",
     ],
     "real_source": [
-        "The image originate from a reliable and verified source",
+        "The image originates from a reliable and verified source",
         "The image **does not** originate from a reliable, verified, source (imposter, satire, unknown, etc.)",
         "Not relevant",
         "I don't know",
