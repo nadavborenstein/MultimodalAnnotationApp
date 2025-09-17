@@ -1,3 +1,4 @@
 pandas
 st-files-connection
 gcsfs
+yaml
