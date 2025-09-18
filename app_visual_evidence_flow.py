@@ -290,6 +290,31 @@ def get_question(current_question):
     return question, possible_answers, possible_next_questions
 
 
+def save_value(question, key):
+    if "labels" not in st.session_state:
+        st.session_state.labels = []
+    multi_choice_answer = st.session_state[key]
+    free_text_answer = st.session_state[f"{key}_text"]
+    st.session_state.labels.append((question, multi_choice_answer, free_text_answer))
+
+
+def is_mandatory_text(current_question):
+    is_mandatory = current_question["mandatory_text"]
+    if is_mandatory == False:
+        return "None"
+    return is_mandatory.split("-")[1]
+
+
+def disable_confirm(mandatory_text, ans, text_ans):
+    if not ans:
+        return True
+
+    if mandatory_text and not text_ans:
+        return True
+
+    return False
+
+
 st.title("Annotation experiment")
 
 if "worker_id" not in st.session_state:
@@ -495,14 +520,6 @@ st.divider()
 #         placeholder.empty()
 
 
-def save_value(question, key):
-    if "labels" not in st.session_state:
-        st.session_state.labels = []
-    multi_choice_answer = st.session_state[key]
-    free_text_answer = st.session_state[f"{key}_text"]
-    st.session_state.labels.append((question, multi_choice_answer, free_text_answer))
-
-
 current_question = question_tree["image"]
 # image related stuff
 placeholder = st.empty()
@@ -511,6 +528,7 @@ with placeholder:
         question, possible_answers, possible_next_questions = get_question(
             current_question
         )
+        mandatory_text_answer: str = is_mandatory_text(current_question)
         with st.container():
             st.subheader("Image related questions")
             st.markdown(f"**{question}**")
@@ -522,8 +540,16 @@ with placeholder:
                 default=None,
                 args=[f"image_question_{i}", question],
             )
+
+            if mandatory_text_answer != "None":
+                mandatory_text = True
+                text_input_title = "Explain your choice **(required)**"
+            else:
+                mandatory_text = False
+                text_input_title = "Explain your choice (optional)"
+
             st.text_input(
-                "Explain your choice",
+                text_input_title,
                 key=f"image_question_{i}_text",
                 placeholder="",
                 value=st.session_state.get(f"image_question_{i}_text", ""),
@@ -531,21 +557,27 @@ with placeholder:
                 help="Please explain your choice in a few words.",
                 args=[f"image_question_{i}_text", "Explain your choice"],
             )
+
             st.checkbox(
                 label="Confirm",
                 value=False,
                 key=f"image_question_{i}_confirm",
-                disabled=not st.session_state[f"image_question_{i}_text"],
+                disabled=disable_confirm(
+                    mandatory_text,
+                    st.session_state[f"image_question_{i}"],
+                    st.session_state[f"image_question_{i}_text"],
+                ),
                 on_change=save_value,
                 args=[question, f"image_question_{i}"],
             )
+
         if not st.session_state[f"image_question_{i}_confirm"]:
             st.stop()
-
         answer = st.session_state[f"image_question_{i}"]
         current_question = possible_next_questions.get(answer)
         if "label" in current_question:
             break
+
 
 placeholder.empty()
 current_question = question_tree["text"]
@@ -567,6 +599,13 @@ with placeholder:
                 default=None,
                 args=[f"text_question_{i}", question],
             )
+            if mandatory_text_answer != "None":
+                mandatory_text = True
+                text_input_title = "Explain your choice **(required)**"
+            else:
+                mandatory_text = False
+                text_input_title = "Explain your choice (optional)"
+                
             st.text_input(
                 "Explain your choice",
                 key=f"text_question_{i}_text",
@@ -580,7 +619,11 @@ with placeholder:
                 label="Confirm",
                 value=False,
                 key=f"text_question_{i}_confirm",
-                disabled=not st.session_state[f"text_question_{i}_text"],
+                disabled=disable_confirm(
+                    mandatory_text,
+                    st.session_state[f"text_question_{i}"],
+                    st.session_state[f"text_question_{i}_text"],
+                ),
                 on_change=save_value,
                 args=[question, f"text_question_{i}"],
             )
