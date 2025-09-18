@@ -69,7 +69,7 @@ INSTRUCTIONS = """
     - **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources.  
     - **Not a claim**: Ads, opinions, jokes, or content that does not contain any verifiable statement.  
 
-    👉 If no claim is present, mark the example as **“not-a-claim”** and briefly explain your choice.  
+    If no claim is present, mark the example as **“not-a-claim”** and briefly explain your choice.  
 
     ---
 
@@ -83,7 +83,7 @@ INSTRUCTIONS = """
     Each question will include:  
     - A **multiple-choice question** (single or multiple answers possible).  
     - A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
-    - A **“Confirm” button**. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
+    - A **“Confirm” button**. Once you press “Confirm,” you cannot go back and change your answer.  
 
     ---
 
