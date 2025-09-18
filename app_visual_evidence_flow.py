@@ -83,7 +83,7 @@ INSTRUCTIONS = """
     Each question will include:  
     - A **multiple-choice question** (single or multiple answers possible).  
     - A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
-    - A **“Confirm” button**. Once you press “Confirm,” you cannot go back and change your answer.  
+    - A **“Confirm” button**. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
 
     ---
 
