@@ -18,7 +18,7 @@ conn = st.connection("gcs", type=FilesConnection)
 LANGUAGE = "en"
 TASK_NAME = f"visual_evidence_head_{LANGUAGE}"
 NOTES = "annotation-experiment/data/multimodal_tweets_balanced.csv"
-DEEPEST_NODE = 4
+DEEPEST_NODE = 5
 
 DONE_CODE = "CV8TK0ZL"
 DONE_LINK = f"https://app.prolific.com/submissions/complete?cc={DONE_CODE}"
@@ -286,7 +286,7 @@ def clear_selections():
     Clear all selections in the session state.
     """
     for i in range(DEEPEST_NODE):
-        for type in ["image", "text"]:
+        for type in ["image", "text", "text_in_image"]:
             for suffix in ["", "_text", "_confirm"]:
                 key = f"{type}_question_{i}{suffix}"
                 if key in st.session_state:
@@ -361,6 +361,12 @@ def is_mandatory_text(current_question):
     if is_mandatory == False:
         return "None"
     return is_mandatory.split("-")[1]
+
+
+def is_multi_answers(current_question):
+    if "multiple_answers" in current_question:
+        return current_question["multiple_answers"]
+    return False
 
 
 def disable_confirm(mandatory_text, ans, text_ans):
@@ -455,36 +461,6 @@ with st.sidebar:
     total = len(st.session_state.progress)
     st.progress(done / total)
     st.write(f"You have annotated {done} out of {total} items.")
-
-    # st.markdown("---")
-    # st.header("Your selections")
-    # selected_labels = collect_selected_labels()
-    # badges = []
-    # if "cannot_annotate" in st.session_state and st.session_state.cannot_annotate:
-    #     badges.append(my_badge("cannot annotate", "grey"))
-    # if (
-    #     "real_image" in st.session_state
-    #     and QUESTION_OPTIONS["real_image"][1] == st.session_state.real_image
-    # ):
-    #     badges.append(my_badge("non genuine image", "red"))
-    # if (
-    #     "real_source" in st.session_state
-    #     and QUESTION_OPTIONS["real_source"][1] == st.session_state.real_source
-    # ):
-    #     badges.append(my_badge("unreliable source", "green"))
-    # if (
-    #     "tweet_text" in st.session_state
-    #     and QUESTION_OPTIONS["tweet_text"][1] == st.session_state.tweet_text
-    # ):
-    #     badges.append(my_badge("misleading tweet text", "blue"))
-    # if (
-    #     "embedded_text" in st.session_state
-    #     and QUESTION_OPTIONS["embedded_text"][2] == st.session_state.embedded_text
-    # ):
-    #     badges.append(my_badge("misleading image text", "violet"))
-
-    # if badges:
-    #     st.markdown(" ".join(badges))
 
     st.markdown("---")
     st.header("Quick instructions")
@@ -602,13 +578,15 @@ with placeholder:
             current_question
         )
         mandatory_text_answer: str = is_mandatory_text(current_question)
+        multi_answers = is_multi_answers(current_question)
+
         with st.container():
             st.subheader("Image related questions")
             st.markdown(f"**{question}**")
             st.pills(
                 "Select an answer:",
                 possible_answers,
-                selection_mode="single",
+                selection_mode="multi" if multi_answers else "single",
                 key=f"image_question_{i}",
                 default=None,
                 args=[f"image_question_{i}", question],
@@ -645,6 +623,8 @@ with placeholder:
 
         if not st.session_state[f"image_question_{i}_confirm"]:
             st.stop()
+        if multi_answers:
+            break
         answer = st.session_state[f"image_question_{i}"]
         current_question = possible_next_questions.get(answer)
         if "label" in current_question:
@@ -659,13 +639,16 @@ with placeholder:
         question, possible_answers, possible_next_questions = get_question(
             current_question
         )
+        mandatory_text_answer: str = is_mandatory_text(current_question)
+        multi_answers = is_multi_answers(current_question)
+
         with st.container():
             st.subheader("Text related questions")
             st.markdown(f"**{question}**")
             st.pills(
                 "Select an answer:",
                 possible_answers,
-                selection_mode="single",
+                selection_mode="multi" if multi_answers else "single",
                 key=f"text_question_{i}",
                 default=None,
                 args=[f"text_question_{i}", question],
@@ -700,8 +683,71 @@ with placeholder:
             )
         if not st.session_state[f"text_question_{i}_confirm"]:
             st.stop()
+        if multi_answers:
+            break
 
         answer = st.session_state[f"text_question_{i}"]
+        current_question = possible_next_questions.get(answer)
+        if "label" in current_question:
+            break
+
+placeholder.empty()
+current_question = question_tree["text_in_image"]
+placeholder = st.empty()
+
+with placeholder:
+    for i in range(DEEPEST_NODE):
+        question, possible_answers, possible_next_questions = get_question(
+            current_question
+        )
+        mandatory_text_answer: str = is_mandatory_text(current_question)
+        multi_answers = is_multi_answers(current_question)
+
+        with st.container():
+            st.subheader("Text related questions")
+            st.markdown(f"**{question}**")
+            st.pills(
+                "Select an answer:",
+                possible_answers,
+                selection_mode="multi" if multi_answers else "single",
+                key=f"text_in_image_question_{i}",
+                default=None,
+                args=[f"text_in_image_question_{i}", question],
+            )
+            if mandatory_text_answer != "None":
+                mandatory_text = True
+                text_input_title = "Explain your choice **(required)**"
+            else:
+                mandatory_text = False
+                text_input_title = "Explain your choice (optional)"
+
+            st.text_input(
+                text_input_title,
+                key=f"text_in_image_question_{i}_text",
+                placeholder="",
+                value=st.session_state.get(f"text_in_image_question_{i}_text", ""),
+                disabled=not st.session_state[f"text_in_image_question_{i}"],
+                help="Please explain your choice in a few words.",
+                args=[f"text_in_image_question_{i}_text", "Explain your choice"],
+            )
+            st.checkbox(
+                label="Confirm",
+                value=False,
+                key=f"text_in_image_question_{i}_confirm",
+                disabled=disable_confirm(
+                    mandatory_text,
+                    st.session_state[f"text_in_image_question_{i}"],
+                    st.session_state[f"text_in_image_question_{i}_text"],
+                ),
+                on_change=save_value,
+                args=[question, f"text_in_image_question_{i}"],
+            )
+        if not st.session_state[f"text_in_image_question_{i}_confirm"]:
+            st.stop()
+        if multi_answers:
+            break
+
+        answer = st.session_state[f"text_in_image_question_{i}"]
         current_question = possible_next_questions.get(answer)
         if "label" in current_question:
             break
