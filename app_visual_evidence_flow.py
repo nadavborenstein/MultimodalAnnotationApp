@@ -50,7 +50,7 @@ INSTRUCTIONS = """
     
     ---
     
-    ## Task Overview  
+    ### Task Overview  
 
     In this study, we focus on **high-level properties of images and their relationship to claims made in tweets**.  
 
@@ -61,7 +61,7 @@ INSTRUCTIONS = """
 
     ---
 
-    ## Step 1: Identify Claims  
+    ### Step 1: Identify Claims  
 
     1. Carefully examine the tweet and its image.  
     2. Determine whether the tweet and/or image makes an **explicit or implicit claim**.  
@@ -73,7 +73,7 @@ INSTRUCTIONS = """
 
     ---
 
-    ## Step 2: Analyze Misleading Claims  
+    ### Step 2: Analyze Misleading Claims  
 
     If the tweet or image **does make a claim**:  
 
@@ -87,13 +87,13 @@ INSTRUCTIONS = """
 
     ---
 
-    ## Step 3: Continue to the Next Example  
+    ### Step 3: Continue to the Next Example  
 
     After completing the set of questions, you will automatically move on to the next misinformation example.  
 
     ---
 
-    ## Important Notes  
+    ### Important Notes  
 
     - **Answer to the best of your ability.** If you are unsure, provide your most reasonable judgment.  
     - **Take your time.** Careful consideration is more important than speed.  
