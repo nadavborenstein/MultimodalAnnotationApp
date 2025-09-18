@@ -42,6 +42,62 @@ NUM_ANNOTATORS_PER_ITEM = 3  # TODO: adjust as needed
 DEBUGGING = True
 
 INSTRUCTIONS = """
+    Please read the following instructions carefully before proceeding with the annotation task.
+    
+    We are studying how images on X (formerly Twitter) are used to spread misinformation online. 
+    Misinformation can have serious consequences, including shaping public opinion, eroding trust in institutions, and even inciting violence. 
+    By understanding how images are used to spread misinformation, we can develop better strategies to limit their impact.
+    
+    ---
+    
+    ## Task Overview  
+
+    In this study, we focus on **high-level properties of images and their relationship to claims made in tweets**.  
+
+    You will be provided with:  
+    - A series of tweets linked to misinformation.  
+    - The images attached to those tweets.  
+    - Additional context explaining why the tweet and/or image was flagged as misinformation.  
+
+    ---
+
+    ## Step 1: Identify Claims  
+
+    1. Carefully examine the tweet and its image.  
+    2. Determine whether the tweet and/or image makes an **explicit or implicit claim**.  
+
+    - **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources.  
+    - **Not a claim**: Ads, opinions, jokes, or content that does not contain any verifiable statement.  
+
+    👉 If no claim is present, mark the example as **“not-a-claim”** and briefly explain your choice.  
+
+    ---
+
+    ## Step 2: Analyze Misleading Claims  
+
+    If the tweet or image **does make a claim**:  
+
+    1. Identify the claim and try to understand why it is misleading.  
+    2. Answer a short series of **4–8 questions** about the image, the tweet, and their relationship.  
+
+    Each question will include:  
+    - A **multiple-choice question** (single or multiple answers possible).  
+    - A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
+    - A **“Confirm” button**. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
+
+    ---
+
+    ## Step 3: Continue to the Next Example  
+
+    After completing the set of questions, you will automatically move on to the next misinformation example.  
+
+    ---
+
+    ## Important Notes  
+
+    - **Answer to the best of your ability.** If you are unsure, provide your most reasonable judgment.  
+    - **Take your time.** Careful consideration is more important than speed.  
+    - **Participation is voluntary.** You may opt out of this study at any time, with no negative consequences.  
     """
 
 
@@ -236,10 +292,12 @@ def clear_selections():
                 if key in st.session_state:
                     del st.session_state[key]
 
-    if "cannot_annotate" in st.session_state:
-        del st.session_state["cannot_annotate"]
-    if "cannot_annotate_text" in st.session_state:
-        del st.session_state["cannot_annotate_text"]
+    if "has_claim" in st.session_state:
+        del st.session_state["has_claim"]
+    if "has_claim_text" in st.session_state:
+        del st.session_state["has_claim_text"]
+    if "has_claim_confirm" in st.session_state:
+        del st.session_state["has_claim_confirm"]
     st.session_state.labels = []
 
 
@@ -249,11 +307,11 @@ def collect_selected_labels() -> list:
     Returns a list of selected labels.
     """
     labels = []
-    if "cannot_annotate" in st.session_state and st.session_state.cannot_annotate:
+    if "has_claim" in st.session_state and st.session_state.has_claim == "No":
         labels.append(
             (
                 "It is impossible to annotate this image",
-                st.session_state.cannot_annotate_text,
+                st.session_state.has_claim_text,
             )
         )
     if "labels" in st.session_state:
@@ -398,10 +456,10 @@ with st.sidebar:
     st.progress(done / total)
     st.write(f"You have annotated {done} out of {total} items.")
 
-    st.markdown("---")
-    st.header("Your selections")
-    selected_labels = collect_selected_labels()
-    badges = []
+    # st.markdown("---")
+    # st.header("Your selections")
+    # selected_labels = collect_selected_labels()
+    # badges = []
     # if "cannot_annotate" in st.session_state and st.session_state.cannot_annotate:
     #     badges.append(my_badge("cannot annotate", "grey"))
     # if (
@@ -434,9 +492,9 @@ with st.sidebar:
         """
         - Read the tweet text and examine the image carefully.
         - Read the additional context provided to understand why the tweet/image was flagged as misinformation.
+        - Determine whether the tweet/image contain an explicit or implicit claim
         - Answer the questions to the best of your ability.
-        - If you are unsure about a question, select "I don't know/not relevant".
-        - If the tweet/image cannot be annotated, select "It is impossible to annotate this image" and briefly explain why.
+        - If a free-text input is mandatory, it will be marked as so.
         - Click "Confirm" to save your annotations and proceed to the next item.
         """
     )
@@ -495,30 +553,45 @@ with container:
 
 
 st.divider()
-# st.session_state.labels = []
-# if "counter" not in st.session_state:
-#     st.session_state.counter = 0
-
-# # not a claim
-# placeholder = st.empty()
-# with placeholder:
-#     with st.container():
-#         st.markdown(f"**Is there a claim?**")
-#         st.pills(
-#             "Select an answer:",
-#             ["Yes", "No"],
-#             selection_mode="single",
-#             key="has_claim",
-#             default=None,
-#         )
-#     if not st.session_state["has_claim"]:
-#         st.stop()
-#     elif st.session_state["has_claim"] == "No":
-#         confirm_label(note=note)
-#         st.rerun()
-#     else:
-#         placeholder.empty()
-
+claim = True
+# not a claim
+placeholder = st.empty()
+with placeholder.container():
+    st.markdown(f"**Is there a claim?**")
+    st.pills(
+        "Select an answer:",
+        ["Yes", "No"],
+        selection_mode="single",
+        key="has_claim",
+        default=None,
+    )
+    st.text_input(
+        "If not, explain why",
+        key=f"has_claim_text",
+        placeholder="",
+        value=st.session_state.get(f"has_claim_text", ""),
+        disabled=st.session_state["has_claim"] != "No",
+        help="Please explain your choice in a few words.",
+    )
+    st.checkbox(
+        label="Confirm",
+        value=False,
+        key=f"has_claim_confirm",
+        disabled=(not st.session_state["has_claim"])
+        or (
+            st.session_state["has_claim"] == "No"
+            and not st.session_state["has_claim_text"]
+        ),
+    )
+    if not st.session_state["has_claim_confirm"]:
+        st.stop()
+    elif st.session_state["has_claim"] == "No":
+        confirm_label(note=note)
+        st.session_state["has_claim"] = None
+        st.session_state["has_claim_text"] = ""
+        st.session_state["has_claim_confirm"] = False
+        st.rerun()
+    placeholder.empty()
 
 current_question = question_tree["image"]
 # image related stuff
@@ -557,7 +630,6 @@ with placeholder:
                 help="Please explain your choice in a few words.",
                 args=[f"image_question_{i}_text", "Explain your choice"],
             )
-
             st.checkbox(
                 label="Confirm",
                 value=False,
@@ -577,7 +649,6 @@ with placeholder:
         current_question = possible_next_questions.get(answer)
         if "label" in current_question:
             break
-
 
 placeholder.empty()
 current_question = question_tree["text"]
@@ -605,9 +676,9 @@ with placeholder:
             else:
                 mandatory_text = False
                 text_input_title = "Explain your choice (optional)"
-                
+
             st.text_input(
-                "Explain your choice",
+                text_input_title,
                 key=f"text_question_{i}_text",
                 placeholder="",
                 value=st.session_state.get(f"text_question_{i}_text", ""),
