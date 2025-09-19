@@ -56,7 +56,7 @@ INSTRUCTIONS = """
     You will be provided with:  
     - A series of tweets linked to misinformation.  
     - The images attached to those tweets.  
-    - Additional context explaining why the tweet and/or image was flagged as misinformation.  
+    - Additional context explaining why the tweet and/or image was flagged as misinformation, with links to supporting evidence (we have shortened the links for bravity).  
 
     ---
 
@@ -125,8 +125,16 @@ def anonimize_links(text: str) -> str:
     for root_url in urls:
         url = root_url.strip().replace("http://", "").replace("https://", "")
         top_url = url[: url.find("/")] if "/" in url else url
-        anonimized_url = "www." + top_url + "/[LINK]"
+        the_rest = url[len(top_url) :]
+        anonimized_url = "www." + top_url + the_rest[:10] + "..."
         text = text.replace(root_url, anonimized_url)
+    return text
+
+
+def remove_links(text: str):
+    urls = re.findall(r"http\S+|www\S+|https\S+", text, re.IGNORECASE)
+    for url in urls:
+        text = text.replace(url, "")
     return text
 
 
@@ -353,6 +361,7 @@ def save_value(question, key):
     multi_choice_answer = st.session_state[key]
     free_text_answer = st.session_state[f"{key}_text"]
     st.session_state.labels.append((question, multi_choice_answer, free_text_answer))
+    st.session_state.question_counter += 1
 
 
 def is_mandatory_text(current_question):
@@ -454,6 +463,7 @@ with st.spinner("Loading your annotation session...", show_time=True):
         st.session_state.worker_id, notes=notes
     )
 
+
 with st.sidebar:
     st.header("Progress")
     done = st.session_state.progress["done"].notnull().sum()
@@ -495,7 +505,7 @@ note = notes.loc[next_item_id]
 
 image_data = images[note["image_name"]]
 note_text = anonimize_links(note.note)
-tweet_text = anonimize_links(note.full_text)
+tweet_text = remove_links(note.full_text)
 
 item_number = get_item_number(progress=st.session_state.progress)
 
@@ -526,6 +536,8 @@ with container:
             unsafe_allow_html=True,
         )
 
+if "question_counter" not in st.session_state:
+    st.session_state.question_counter = 1
 
 st.divider()
 claim = True
@@ -580,7 +592,9 @@ with placeholder:
         multi_answers = is_multi_answers(current_question)
 
         with st.container():
-            st.subheader("Image related questions")
+            st.subheader(
+                f"{st.session_state.question_counter}) Image related questions"
+            )
             st.markdown(f"**{question}**")
             st.pills(
                 "Select an answer:",
@@ -619,7 +633,6 @@ with placeholder:
                 on_change=save_value,
                 args=[question, f"image_question_{i}"],
             )
-
         if not st.session_state[f"image_question_{i}_confirm"]:
             st.stop()
         if multi_answers:
@@ -642,7 +655,7 @@ with placeholder:
         multi_answers = is_multi_answers(current_question)
 
         with st.container():
-            st.subheader("Text related questions")
+            st.subheader(f"{st.session_state.question_counter}) Text related questions")
             st.markdown(f"**{question}**")
             st.pills(
                 "Select an answer:",
@@ -703,7 +716,7 @@ with placeholder:
         multi_answers = is_multi_answers(current_question)
 
         with st.container():
-            st.subheader("Text related questions")
+            st.subheader(f"{st.session_state.question_counter}) Text related questions")
             st.markdown(f"**{question}**")
             st.pills(
                 "Select an answer:",
@@ -752,6 +765,6 @@ with placeholder:
             break
 
 st.info("loading next image")
-
+st.session_state.question_counter = 1
 confirm_label(note=note)
 st.rerun()
