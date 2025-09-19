@@ -42,17 +42,16 @@ NUM_ANNOTATORS_PER_ITEM = 3  # TODO: adjust as needed
 DEBUGGING = True
 
 INSTRUCTIONS = """
-    Please read the following instructions carefully before proceeding with the annotation task.
-    
-    We are studying how images on X (formerly Twitter) are used to spread misinformation online. 
-    Misinformation can have serious consequences, including shaping public opinion, eroding trust in institutions, and even inciting violence. 
-    By understanding how images are used to spread misinformation, we can develop better strategies to limit their impact.
-    
-    ---
-    
-    ### Task Overview  
+    Please read these instructions carefully before beginning the annotation task.  
 
-    In this study, we focus on **high-level properties of images and their relationship to claims made in tweets**.  
+    We are studying how images on **X (formerly Twitter)** are used to spread misinformation online.  
+    Misinformation can have serious consequences: it can shape public opinion, erode trust in institutions, and even incite violence. By analyzing how images are used in this context, we aim to develop better strategies to limit their impact.  
+
+    ---
+
+    #### Task Overview  
+
+    In this study, we focus on **properties of images and their relationship to claims made in tweets**.  
 
     You will be provided with:  
     - A series of tweets linked to misinformation.  
@@ -61,19 +60,19 @@ INSTRUCTIONS = """
 
     ---
 
-    ### Step 1: Identify Claims  
+    #### Step 1: Identify Claims  
 
     1. Carefully examine the tweet and its image.  
-    2. Determine whether the tweet and/or image makes an **explicit or implicit claim**.  
+    2. Determine whether the tweet and/or image makes an **explicit or implicit claim**:  
 
     - **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources.  
     - **Not a claim**: Ads, opinions, jokes, or content that does not contain any verifiable statement.  
 
-    If no claim is present, mark the example as **“not-a-claim”** and briefly explain your choice.  
+    Then, answer the question “Does the tweet and/or image make an implicit or explicit claim?” and briefly explain your choice.  
 
     ---
 
-    ### Step 2: Analyze Misleading Claims  
+    #### Step 2: Analyze Misleading Claims  
 
     If the tweet or image **does make a claim**:  
 
@@ -81,23 +80,23 @@ INSTRUCTIONS = """
     2. Answer a short series of **4–8 questions** about the image, the tweet, and their relationship.  
 
     Each question will include:  
-    - A **multiple-choice question** (single or multiple answers possible).  
+    - A **Yes/No question**..  
     - A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
-    - A **“Confirm” button**. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
+    - A **“Confirm” button** to move forward to the next question. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
 
     ---
 
-    ### Step 3: Continue to the Next Example  
+    #### Step 3: Continue to the Next Example  
 
     After completing the set of questions, you will automatically move on to the next misinformation example.  
 
     ---
 
-    ### Important Notes  
+    #### Important Notes  
 
     - **Answer to the best of your ability.** If you are unsure, provide your most reasonable judgment.  
     - **Take your time.** Careful consideration is more important than speed.  
-    - **Participation is voluntary.** You may opt out of this study at any time, with no negative consequences.  
+    - **Participation is voluntary.** You may opt out of this study at any time, with no negative consequences. 
     """
 
 
@@ -533,7 +532,7 @@ claim = True
 # not a claim
 placeholder = st.empty()
 with placeholder.container():
-    st.markdown(f"**Is there a claim?**")
+    st.markdown(f"**Does the tweet and/or image make an implicit or explicit claim?**")
     st.pills(
         "Select an answer:",
         ["Yes", "No"],
