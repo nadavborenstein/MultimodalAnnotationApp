@@ -63,12 +63,12 @@ INSTRUCTIONS = """
     #### Step 1: Identify Claims  
 
     1. Carefully examine the tweet and its image.  
-    2. Determine whether the tweet and/or image makes an **explicit or implicit claim**:  
+    2. Determine whether the tweet and/or image **makes a claim** (either explicitly or implicitly):  
 
     - **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources.  
     - **Not a claim**: Ads, opinions, jokes, or content that does not contain any verifiable statement.  
 
-    Then, answer the question “Does the tweet and/or image make an implicit or explicit claim?” and briefly explain your choice.  
+    Then, answer the question “Does the tweet and/or image make a claim? (either explicitly or implicitly)” and briefly explain your choice.  
 
     ---
 
@@ -544,7 +544,9 @@ claim = True
 # not a claim
 placeholder = st.empty()
 with placeholder.container():
-    st.markdown(f"**Does the tweet and/or image make an implicit or explicit claim?**")
+    st.markdown(
+        f"**Does the tweet and/or image make a claim? (either explicitly or implicitly)**"
+    )
     st.pills(
         "Select an answer:",
         ["Yes", "No"],
