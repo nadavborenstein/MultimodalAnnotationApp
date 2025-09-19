@@ -65,7 +65,7 @@ INSTRUCTIONS = """
     1. Carefully examine the tweet and its image.  
     2. Determine whether the tweet and/or image **makes a claim** (either explicitly or implicitly):  
 
-    - **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources.  
+    - **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources. An implicit claim can be, for example "The event depicted by the image is true".
     - **Not a claim**: Ads, opinions, jokes, or content that does not contain any verifiable statement.  
 
     Then, answer the question “Does the tweet and/or image make a claim? (either explicitly or implicitly)” and briefly explain your choice.  
