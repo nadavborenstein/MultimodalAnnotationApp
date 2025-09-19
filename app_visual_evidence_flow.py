@@ -56,7 +56,7 @@ INSTRUCTIONS = """
     You will be provided with:  
     - A series of tweets linked to misinformation.  
     - The images attached to those tweets.  
-    - Additional context explaining why the tweet and/or image was flagged as misinformation, with links to supporting evidence (we have shortened the links for bravity).  
+    - Additional context explaining why the tweet and/or image was flagged as misinformation, with links to supporting evidence (we have shortened the links for brevity).  
 
     ---
 
