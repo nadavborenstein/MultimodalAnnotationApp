@@ -45,31 +45,40 @@ NUM_NOTES_IN_DEBUGGING = 3
 INSTRUCTIONS = """
     Please read these instructions carefully before beginning the annotation task.  
 
-    We are studying how images on **X (formerly Twitter)** are used to spread misinformation online.  
+    We are studying how images on social media, such as **X (formerly Twitter)** are used to spread misinformation online.  
     Misinformation can have serious consequences: it can shape public opinion, erode trust in institutions, and even incite violence. By analyzing how images are used in this context, we aim to develop better strategies to limit their impact.  
 
     ---
 
     #### Task Overview  
 
-    In this study, we focus on **properties of images and their relationship to claims made in tweets**.  
+    In this study, you will be asked to analyze images and text posted by X (Twitter) users. Your task is to carefully examine the images and text in the Tweets (posts), and answer questions about the claims being made.
 
-    You will be provided with:  
-    - A series of tweets linked to misinformation.  
-    - The images attached to those tweets.  
-    - Additional context explaining why the tweet and/or image was flagged as misinformation, with links to supporting evidence (we have shortened the links for brevity).  
 
+    On each screen, you will see:
+    - **Tweet text**: The text of a tweet that has been identified as misleading.  
+    - **Image**: The image(s) attached to that tweet.  
+    - **Additional context**: text written by another user, explaining why the tweet text and/or image is misleading.
+
+    You will see NUM_QUESTIONS pairs of Tweets & images in total. For each tweet and image pair, there are 3 main steps to complete.
+    
     ---
 
     #### Step 1: Identify Claims  
 
-    1. Carefully examine the tweet and its image.  
-    2. Determine whether the tweet and/or image **makes a claim** (either explicitly or implicitly):  
+    1. Carefully examine the tweet and the image.  
+    2. Determine whether the tweet and/or image makes a claim.
 
-    - **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources. An implicit claim can be, for example "The event depicted by the image is true".
-    - **Not a claim**: Ads, opinions, jokes, or content that does not contain any verifiable statement.  
+    **What is a claim?**
+    - **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources.  For example, the statement: “Red meat is good for your health”. 
+    - **Not a claim**: Personal opinions, jokes, advertisements, or content that does not contain any verifiable statement.  For example, the preposition: “I really like red meat”.
+    
+    Then, answer the question “Does the tweet and/or image make a claim?” and briefly explain your choice.  
 
-    Then, answer the question “Does the tweet and/or image make a claim? (either explicitly or implicitly)” and briefly explain your choice.  
+    ⚠️ Claims can be either explicit (e.g., the tweet’s text stating “16 billion passwords have been leaked from Google yesterday”) or implicit (e.g., the tweet’s text is “look at this mess!”, and the image is a photo of a protest. Then, the implicit claim is “this protest took place, and was messy”.). 
+
+    ⚠️ The claims can be made either by the tweet’s text or by the image. Even if the tweet’s text is empty, the image can still contain a claim.
+
 
     ---
 
@@ -77,8 +86,9 @@ INSTRUCTIONS = """
 
     If the tweet or image **does make a claim**:  
 
-    1. Identify the claim and try to understand why it is misleading.  
-    2. Answer a short series of **4–8 questions** about the image, the tweet, and their relationship.  
+    1. Identify the claim made by the tweet’s text and/or image.
+    2. Read the *additional context* and understand **why the claim is misleading**. 
+    3. Answer a short series of **4–8 questions** about the image, the tweet’s text, and their relationship.  
 
     Each question will include:  
     - A **Yes/No question**..  
@@ -89,16 +99,24 @@ INSTRUCTIONS = """
 
     #### Step 3: Continue to the Next Example  
 
-    After completing the set of questions, you will automatically move on to the next misinformation example.  
+    After completing the set of questions, you will automatically move on to the next example.  
 
-    ---
+    --- 
 
     #### Important Notes  
 
     - **Answer to the best of your ability.** If you are unsure, provide your most reasonable judgment.  
     - **Take your time.** Careful consideration is more important than speed.  
-    - **Participation is voluntary.** You may opt out of this study at any time, with no negative consequences. 
+    - **Participation is voluntary.** You may opt out of this study at any time, with no negative consequences.  
     """
+INSTRUCTIONS = INSTRUCTIONS.replace(
+    "NUM_QUESTIONS",
+    (
+        str(MAX_ANNOTATIONS_PER_WORKER + 5)
+        if ADD_QUALIFICATIONS
+        else str(MAX_ANNOTATIONS_PER_WORKER)
+    ),
+)
 
 
 def time_before():
@@ -464,7 +482,6 @@ with st.spinner("Loading your annotation session...", show_time=True):
         st.session_state.worker_id, notes=notes
     )
 
-
 with st.sidebar:
     st.header("Progress")
     done = st.session_state.progress["done"].notnull().sum()
@@ -534,7 +551,7 @@ with container:
         with st.container(border=False):
             title = "Additional context"
             st.markdown(
-                f'<div style="background-color:#efeff5;Height:auto" dir="auto"><h3>{title}</h3>{note_text}</div>',
+                f'<div style="background-color:#E8F6FF;Height:auto" dir="auto"><h3>{title}</h3>{note_text}</div>',
                 unsafe_allow_html=True,
             )
 
@@ -649,7 +666,9 @@ with placeholder:
 
 placeholder.empty()
 current_question = question_tree["text"]
+
 placeholder = st.empty()
+
 
 with placeholder:
     for i in range(DEEPEST_NODE):
@@ -659,7 +678,7 @@ with placeholder:
         mandatory_text_answer: str = is_mandatory_text(current_question)
         multi_answers = is_multi_answers(current_question)
         explanation = current_question["explanation"]
-        
+
         with st.container():
             st.subheader(f"{st.session_state.question_counter}) Text related questions")
             st.markdown(f"**{question}**")
