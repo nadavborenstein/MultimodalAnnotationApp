@@ -30,7 +30,7 @@ ADD_QUALIFICATIONS = True
 QUALIFICATION_NOTES = "annotation-experiment/data/en_qualification_data.csv"
 QUALIFICATION_IMAGE_FOLDER = "annotation-experiment/static/qualification_images/"
 QUESTION_TREE = "annotation-experiment/static/question_tree.yaml"
-MAX_ANNOTATIONS_PER_WORKER = 25  # TODO: adjust as needed
+MAX_ANNOTATIONS_PER_WORKER = 1  # TODO: adjust as needed
 ID_COL = "tweet_id"
 IMAGE_FOLDER = "annotation-experiment/static/resized_images/"
 PROGRESS_FOLDER = f"annotation-experiment/data/worker_progress/{TASK_NAME}"
@@ -40,6 +40,7 @@ NUM_ANNOTATORS_PER_ITEM = 3  # TODO: adjust as needed
 
 
 DEBUGGING = True
+NUM_NOTES_IN_DEBUGGING = 3
 
 INSTRUCTIONS = """
     Please read these instructions carefully before beginning the annotation task.  
@@ -530,11 +531,12 @@ with container:
         )
         # st.write(tweet_text)
         st.markdown("---")
-        st.subheader("Additional context")
-        st.markdown(
-            f'<div dir="auto">{note_text}</div>',
-            unsafe_allow_html=True,
-        )
+        with st.container(border=False):
+            title = "Additional context"
+            st.markdown(
+                f'<div style="background-color:#efeff5;Height:auto" dir="auto"><h3>{title}</h3>{note_text}</div>',
+                unsafe_allow_html=True,
+            )
 
 if "question_counter" not in st.session_state:
     st.session_state.question_counter = 1
@@ -592,6 +594,7 @@ with placeholder:
         )
         mandatory_text_answer: str = is_mandatory_text(current_question)
         multi_answers = is_multi_answers(current_question)
+        explanation = current_question["explanation"]
 
         with st.container():
             st.subheader(
@@ -599,7 +602,7 @@ with placeholder:
             )
             st.markdown(f"**{question}**")
             st.pills(
-                "Select an answer:",
+                explanation,
                 possible_answers,
                 selection_mode="multi" if multi_answers else "single",
                 key=f"image_question_{i}",
@@ -655,12 +658,13 @@ with placeholder:
         )
         mandatory_text_answer: str = is_mandatory_text(current_question)
         multi_answers = is_multi_answers(current_question)
-
+        explanation = current_question["explanation"]
+        
         with st.container():
             st.subheader(f"{st.session_state.question_counter}) Text related questions")
             st.markdown(f"**{question}**")
             st.pills(
-                "Select an answer:",
+                explanation,
                 possible_answers,
                 selection_mode="multi" if multi_answers else "single",
                 key=f"text_question_{i}",
@@ -716,12 +720,13 @@ with placeholder:
         )
         mandatory_text_answer: str = is_mandatory_text(current_question)
         multi_answers = is_multi_answers(current_question)
+        explanation = current_question["explanation"]
 
         with st.container():
             st.subheader(f"{st.session_state.question_counter}) Text related questions")
             st.markdown(f"**{question}**")
             st.pills(
-                "Select an answer:",
+                explanation,
                 possible_answers,
                 selection_mode="multi" if multi_answers else "single",
                 key=f"text_in_image_question_{i}",
