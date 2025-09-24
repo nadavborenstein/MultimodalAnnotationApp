@@ -43,7 +43,7 @@ DEBUGGING = True
 NUM_NOTES_IN_DEBUGGING = 3
 
 INSTRUCTIONS = """
-    Please read these instructions carefully before beginning the annotation task.  
+    **Please read these instructions carefully before beginning the annotation task.**
 
     We are studying how images on social media, such as **X (formerly Twitter)** are used to spread misinformation online.  
     Misinformation can have serious consequences: it can shape public opinion, erode trust in institutions, and even incite violence. By analyzing how images are used in this context, we aim to develop better strategies to limit their impact.  
