@@ -369,7 +369,8 @@ def get_question(current_question):
     question = current_question["question"]
     possible_answers = current_question["answers"].keys()
     possible_answers = list(possible_answers)
-    possible_answers.sort()
+    possible_answers = [s.capitalize() for s in possible_answers]
+    possible_answers.sort(reverse=True)
     possible_next_questions = current_question["answers"]
     return question, possible_answers, possible_next_questions
 
