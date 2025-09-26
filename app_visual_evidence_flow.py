@@ -60,7 +60,7 @@ INSTRUCTIONS = """
     - **Image**: The image(s) attached to that tweet.  
     - **Additional context**: text written by another user, explaining why the tweet text and/or image is misleading.
 
-    You will see NUM_QUESTIONS pairs of Tweets & images in total. For each tweet and image pair, there are 3 main steps to complete.
+    You will see **NUM_QUESTIONS pairs** of Tweets & images in total. For each tweet and image pair, there are 3 main steps to complete.
     
     ---
 
@@ -88,10 +88,11 @@ INSTRUCTIONS = """
 
     1. Identify the claim made by the tweet’s text and/or image.
     2. Read the *additional context* and understand **why the claim is misleading**. 
-    3. Answer a short series of **4–8 questions** about the image, the tweet’s text, and their relationship.  
+    3. Answer a short series of **4–8 questions** about the image, the tweet’s text, and their relationship.
+   
 
     Each question will include:  
-    - A **Yes/No question**..  
+    - A **Yes/No question**. Each question will also contain a short text explaining the question.  
     - A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
     - A **“Confirm” button** to move forward to the next question. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
 
