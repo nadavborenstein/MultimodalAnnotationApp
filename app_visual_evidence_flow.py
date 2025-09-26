@@ -40,7 +40,7 @@ NUM_ANNOTATORS_PER_ITEM = 6  # TODO: adjust as needed
 
 
 DEBUGGING = True
-NUM_NOTES_IN_DEBUGGING = 3
+NUM_NOTES_IN_DEBUGGING = MAX_ANNOTATIONS_PER_WORKER
 
 INSTRUCTIONS = """
     **Please read these instructions carefully before beginning the annotation task.**
@@ -218,7 +218,7 @@ def load_notes() -> pd.DataFrame:
     notes = notes[notes["image_name"].isin(image_names)]
     notes = notes.drop_duplicates(subset=["image_name"])
     if DEBUGGING:
-        notes = notes.head(25)
+        notes = notes.head(NUM_NOTES_IN_DEBUGGING)
     notes.set_index(ID_COL, inplace=True, drop=False)
 
     if ADD_QUALIFICATIONS:
