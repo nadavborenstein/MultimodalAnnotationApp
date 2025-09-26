@@ -77,7 +77,7 @@ INSTRUCTIONS = """
 
     ⚠️ Claims can be either explicit (e.g., the tweet’s text stating “16 billion passwords have been leaked from Google yesterday”) or implicit (e.g., the tweet’s text is “look at this mess!”, and the image is a photo of a protest. Then, the implicit claim is “this protest took place, and was messy”.). 
 
-    ⚠️ The claims can be made either by the tweet’s text or by the image. Even if the tweet’s text is empty, the image can still contain a claim.
+    ⚠️ The claims can be made either by the tweet’s text or by the image. Even if the tweet’s text is empty, the image may still contain a claim.
 
 
     ---
@@ -87,7 +87,7 @@ INSTRUCTIONS = """
     If the tweet or image **does make a claim**:  
 
     1. Identify the claim made by the tweet’s text and/or image.
-    2. Read the *additional context* and understand **why the claim is misleading**. 
+    2. Read the *Additional context* and understand **why the claim is misleading**. 
     3. Answer a short series of **4–8 questions** about the image, the tweet’s text, and their relationship.
    
 
