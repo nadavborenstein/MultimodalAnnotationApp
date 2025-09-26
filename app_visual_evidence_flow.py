@@ -30,13 +30,13 @@ ADD_QUALIFICATIONS = True
 QUALIFICATION_NOTES = "annotation-experiment/data/en_qualification_data.csv"
 QUALIFICATION_IMAGE_FOLDER = "annotation-experiment/static/qualification_images/"
 QUESTION_TREE = "annotation-experiment/static/question_tree.yaml"
-MAX_ANNOTATIONS_PER_WORKER = 1  # TODO: adjust as needed
+MAX_ANNOTATIONS_PER_WORKER = 10  # TODO: adjust as needed
 ID_COL = "tweet_id"
 IMAGE_FOLDER = "annotation-experiment/static/resized_images/"
 PROGRESS_FOLDER = f"annotation-experiment/data/worker_progress/{TASK_NAME}"
 DONE_FILE = f"annotation-experiment/data/done_{TASK_NAME}.txt"
 NON_PARTICIPANTS_FILE = "annotation-experiment/data/non_participants.txt"
-NUM_ANNOTATORS_PER_ITEM = 3  # TODO: adjust as needed
+NUM_ANNOTATORS_PER_ITEM = 6  # TODO: adjust as needed
 
 
 DEBUGGING = True
