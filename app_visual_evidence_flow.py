@@ -28,8 +28,9 @@ NO_CONCENT_LINK = f"https://app.prolific.com/submissions/complete?cc={NO_CONCENT
 
 ADD_QUALIFICATIONS = True
 QUALIFICATION_NOTES = "annotation-experiment/data/en_qualification_data.csv"
+INSTRUCTIONS_FILE = "static/instructions.txt"
 QUALIFICATION_IMAGE_FOLDER = "annotation-experiment/static/qualification_images/"
-QUESTION_TREE = "annotation-experiment/static/question_tree.yaml"
+QUESTION_TREE = "static/question_tree.yaml"
 MAX_ANNOTATIONS_PER_WORKER = 10  # TODO: adjust as needed
 ID_COL = "tweet_id"
 IMAGE_FOLDER = "annotation-experiment/static/resized_images/"
@@ -42,74 +43,8 @@ NUM_ANNOTATORS_PER_ITEM = 6  # TODO: adjust as needed
 DEBUGGING = True
 NUM_NOTES_IN_DEBUGGING = MAX_ANNOTATIONS_PER_WORKER
 
-INSTRUCTIONS = """
-    **Please read these instructions carefully before beginning the annotation task.**
+INSTRUCTIONS = open(INSTRUCTIONS_FILE, "r").read()
 
-    We are studying how images on social media, such as **X (formerly Twitter)** are used to spread misinformation online.  
-    Misinformation can have serious consequences: it can shape public opinion, erode trust in institutions, and even incite violence. By analyzing how images are used in this context, we aim to develop better strategies to limit their impact.  
-
-    ---
-
-    #### Task Overview  
-
-    In this study, you will be asked to analyze images and text posted by X (Twitter) users. Your task is to carefully examine the images and text in the Tweets (posts), and answer questions about the claims being made.
-
-
-    On each screen, you will see:
-    - **Tweet text**: The text of a tweet that has been identified as misleading.  
-    - **Image**: The image(s) attached to that tweet.  
-    - **Additional context**: text written by another user, explaining why the tweet text and/or image is misleading.
-
-    You will see **NUM_QUESTIONS pairs** of Tweets & images in total. For each tweet and image pair, there are 3 main steps to complete.
-    
-    ---
-
-    #### Step 1: Identify Claims  
-
-    1. Carefully examine the tweet and the image.  
-    2. Determine whether the tweet and/or image makes a claim.
-
-    **What is a claim?**
-    - **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources.  For example, the statement: “Red meat is good for your health”. 
-    - **Not a claim**: Personal opinions, jokes, advertisements, or content that does not contain any verifiable statement.  For example, the preposition: “I really like red meat”.
-    
-    Then, answer the question “Does the tweet and/or image make a claim?” and briefly explain your choice.  
-
-    ⚠️ Claims can be either explicit (e.g., the tweet’s text stating “16 billion passwords have been leaked from Google yesterday”) or implicit (e.g., the tweet’s text is “look at this mess!”, and the image is a photo of a protest. Then, the implicit claim is “this protest took place, and was messy”.). 
-
-    ⚠️ The claims can be made either by the tweet’s text or by the image. Even if the tweet’s text is empty, the image may still contain a claim.
-
-
-    ---
-
-    #### Step 2: Analyze Misleading Claims  
-
-    If the tweet or image **does make a claim**:  
-
-    1. Identify the claim made by the tweet’s text and/or image.
-    2. Read the *Additional context* and understand **why the claim is misleading**. 
-    3. Answer a short series of **4–8 questions** about the image, the tweet’s text, and their relationship.
-   
-
-    Each question will include:  
-    - A **Yes/No question**. Each question will also contain a short text explaining the question.  
-    - A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
-    - A **“Confirm” button** to move forward to the next question. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
-
-    ---
-
-    #### Step 3: Continue to the Next Example  
-
-    After completing the set of questions, you will automatically move on to the next example.  
-
-    --- 
-
-    #### Important Notes  
-
-    - **Answer to the best of your ability.** If you are unsure, provide your most reasonable judgment.  
-    - **Take your time.** Careful consideration is more important than speed.  
-    - **Participation is voluntary.** You may opt out of this study at any time, with no negative consequences.  
-    """
 INSTRUCTIONS = INSTRUCTIONS.replace(
     "NUM_QUESTIONS",
     (
@@ -313,7 +248,7 @@ def clear_selections():
     Clear all selections in the session state.
     """
     for i in range(DEEPEST_NODE):
-        for type in ["image", "text", "text_in_image"]:
+        for type in ["image", "text", "claim"]:
             for suffix in ["", "_text", "_confirm"]:
                 key = f"{type}_question_{i}{suffix}"
                 if key in st.session_state:
@@ -540,10 +475,10 @@ container = st.container(
 with container:
     image_col, text_col = st.columns([3, 2])
     with image_col:
-        st.subheader("Tweet image")
+        st.subheader("Tweet image 🖼️")
         st.image(image_data)
     with text_col:
-        st.subheader("Tweet text")
+        st.subheader("Tweet text 💬")
         st.markdown(
             f'<div dir="auto">{tweet_text}</div>',
             unsafe_allow_html=True,
@@ -569,29 +504,24 @@ with placeholder.container():
         f"**Does the tweet and/or image make a claim? (either explicitly or implicitly)**"
     )
     st.pills(
-        "Select an answer:",
+        "**Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false.\n**.Remember:** the claim can be implicit, for example, sharing a fake image with the Tweet text implicitly claiming that the image is real (e.g., 'Look at this! It is terrible!').",
         ["Yes", "No"],
         selection_mode="single",
         key="has_claim",
         default=None,
     )
     st.text_input(
-        "If not, explain why",
+        "If not, explain why. If yes, describe the claim in your own words (**required**)",
         key=f"has_claim_text",
         placeholder="",
         value=st.session_state.get(f"has_claim_text", ""),
-        disabled=st.session_state["has_claim"] != "No",
         help="Please explain your choice in a few words.",
     )
     st.checkbox(
         label="Confirm",
         value=False,
         key=f"has_claim_confirm",
-        disabled=(not st.session_state["has_claim"])
-        or (
-            st.session_state["has_claim"] == "No"
-            and not st.session_state["has_claim_text"]
-        ),
+        disabled=not st.session_state["has_claim_text"],
     )
     if not st.session_state["has_claim_confirm"]:
         st.stop()
@@ -603,9 +533,73 @@ with placeholder.container():
         st.rerun()
     placeholder.empty()
 
+placeholder.empty()
+current_question = question_tree["claim_identification"]
+placeholder = st.empty()
+
+with placeholder:
+    for i in range(DEEPEST_NODE):
+        question, possible_answers, possible_next_questions = get_question(
+            current_question
+        )
+        mandatory_text_answer: str = is_mandatory_text(current_question)
+        multi_answers = is_multi_answers(current_question)
+        explanation = current_question["explanation"]
+
+        with st.container():
+            st.subheader(f"{st.session_state.question_counter}) Text related questions")
+            st.markdown(f"**{question}**")
+            st.pills(
+                explanation,
+                possible_answers,
+                selection_mode="multi" if multi_answers else "single",
+                key=f"claim_question_{i}",
+                default=None,
+                args=[f"claim_question_{i}", question],
+            )
+            if mandatory_text_answer != "None":
+                mandatory_text = True
+                text_input_title = "Explain your choice **(required)**"
+            else:
+                mandatory_text = False
+                text_input_title = "Explain your choice (optional)"
+
+            st.text_input(
+                text_input_title,
+                key=f"claim_question_{i}_text",
+                placeholder="",
+                value=st.session_state.get(f"claim_question_{i}_text", ""),
+                disabled=not st.session_state[f"claim_question_{i}"],
+                help="Please explain your choice in a few words.",
+                args=[f"claim_question_{i}_text", "Explain your choice"],
+            )
+            st.checkbox(
+                label="Confirm",
+                value=False,
+                key=f"claim_question_{i}_confirm",
+                disabled=disable_confirm(
+                    mandatory_text,
+                    st.session_state[f"claim_question_{i}"],
+                    st.session_state[f"claim_question_{i}_text"],
+                ),
+                on_change=save_value,
+                args=[question, f"claim_question_{i}"],
+            )
+        if not st.session_state[f"claim_question_{i}_confirm"]:
+            st.stop()
+        if multi_answers:
+            break
+
+        answer = st.session_state[f"claim_question_{i}"]
+        current_question = possible_next_questions.get(answer)
+        if "label" in current_question:
+            break
+
+placeholder.empty()
 current_question = question_tree["image"]
 # image related stuff
 placeholder = st.empty()
+
 with placeholder:
     for i in range(DEEPEST_NODE):
         question, possible_answers, possible_next_questions = get_question(
@@ -666,11 +660,10 @@ with placeholder:
         if "label" in current_question:
             break
 
+
 placeholder.empty()
 current_question = question_tree["text"]
-
 placeholder = st.empty()
-
 
 with placeholder:
     for i in range(DEEPEST_NODE):
@@ -730,67 +723,6 @@ with placeholder:
         if "label" in current_question:
             break
 
-placeholder.empty()
-current_question = question_tree["text_in_image"]
-placeholder = st.empty()
-
-with placeholder:
-    for i in range(DEEPEST_NODE):
-        question, possible_answers, possible_next_questions = get_question(
-            current_question
-        )
-        mandatory_text_answer: str = is_mandatory_text(current_question)
-        multi_answers = is_multi_answers(current_question)
-        explanation = current_question["explanation"]
-
-        with st.container():
-            st.subheader(f"{st.session_state.question_counter}) Text related questions")
-            st.markdown(f"**{question}**")
-            st.pills(
-                explanation,
-                possible_answers,
-                selection_mode="multi" if multi_answers else "single",
-                key=f"text_in_image_question_{i}",
-                default=None,
-                args=[f"text_in_image_question_{i}", question],
-            )
-            if mandatory_text_answer != "None":
-                mandatory_text = True
-                text_input_title = "Explain your choice **(required)**"
-            else:
-                mandatory_text = False
-                text_input_title = "Explain your choice (optional)"
-
-            st.text_input(
-                text_input_title,
-                key=f"text_in_image_question_{i}_text",
-                placeholder="",
-                value=st.session_state.get(f"text_in_image_question_{i}_text", ""),
-                disabled=not st.session_state[f"text_in_image_question_{i}"],
-                help="Please explain your choice in a few words.",
-                args=[f"text_in_image_question_{i}_text", "Explain your choice"],
-            )
-            st.checkbox(
-                label="Confirm",
-                value=False,
-                key=f"text_in_image_question_{i}_confirm",
-                disabled=disable_confirm(
-                    mandatory_text,
-                    st.session_state[f"text_in_image_question_{i}"],
-                    st.session_state[f"text_in_image_question_{i}_text"],
-                ),
-                on_change=save_value,
-                args=[question, f"text_in_image_question_{i}"],
-            )
-        if not st.session_state[f"text_in_image_question_{i}_confirm"]:
-            st.stop()
-        if multi_answers:
-            break
-
-        answer = st.session_state[f"text_in_image_question_{i}"]
-        current_question = possible_next_questions.get(answer)
-        if "label" in current_question:
-            break
 
 st.info("loading next image")
 st.session_state.question_counter = 1

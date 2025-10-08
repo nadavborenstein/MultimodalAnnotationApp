@@ -1,0 +1,70 @@
+
+**Please read these instructions carefully before beginning the annotation task.**
+
+We are studying how images on social media, such as **X (formerly Twitter)** are used to spread misinformation online.  
+Misinformation can have serious consequences: it can shape public opinion, erode trust in institutions, and even incite violence. By analyzing how images are used in this context, we aim to develop better strategies to limit their impact.  
+
+---
+
+#### Task Overview  
+
+In this study, you will be asked  to analyze images and text posted by X (Twitter) users. Your task is to carefully examine the images and text in the Tweets (posts), and answer questions about the claims being made.
+
+
+On each screen, you will see:
+- **Tweet text (💬)**: The text of a tweet that has been identified as misleading.  
+- **Image (🖼️)**: The image(s) attached to that tweet.  
+- **Additional context**: text written by another user, explaining why the tweet text and/or image is misleading.
+
+You will see **NUM_QUESTIONS pairs** of Tweets & images in total. For each tweet and image pair, there are 3 main steps to complete.
+
+---
+
+#### Step 1: Identify Claims  
+
+1. Carefully examine the Tweet text and the Image.  
+2. Determine whether the Tweet text and/or Image makes a claim.
+3. **Understand** the claim made by the Tweet’s text and/or image.
+
+**What is a claim?**
+- **Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false using evidence, reasoning, or authoritative sources.  For example, the statement: “Red meat is good for your health”. 
+- **Not a claim**: Personal opinions, jokes, advertisements, or content that does not contain any verifiable statement.  For example, the preposition: “I really like red meat”.
+
+Then, answer the question “Does the tweet and/or image make a claim?”. If answered "No", briefly explain your choice. If answered "Yes", briefly describe the claim in your own words. 
+
+⚠️ Claims can be either explicit (e.g., the tweet’s text stating “16 billion passwords have been leaked from Google yesterday”) or implicit (e.g., the tweet’s text is “look at this mess!”, and the image is a photo of a protest. Then, the implicit claim is “this protest took place, and was messy”.). 
+
+⚠️ The claims can be made either by the tweet’s text or by the image. Even if the Tweet’s text (💬) is empty, the image (🖼️) may still contain a claim.
+
+
+---
+
+#### Step 2: Analyze Misleading Claims  
+
+If the tweet or image **does make a claim**:  
+
+1. Read the *Additional context* and understand **why the claim is misleading**. 
+2. Answer a short series of **4–8 questions** about the image, the tweet’s text, and their relationship.
+
+
+Each question will include:  
+- A **Yes/No question**. Each question will also contain a short text explaining the question.  
+- A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
+- A **“Confirm” button** to move forward to the next question. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
+
+⚠️ Assume the "Additional context" is correct, and use the information provided to answer the questions. 
+
+
+---
+
+#### Step 3: Continue to the Next Example  
+
+After completing the set of questions, you will automatically move on to the next example.  
+
+--- 
+
+#### Important Notes  
+
+- **Answer to the best of your ability.** If you are unsure, provide your most reasonable judgment.  
+- **Take your time.** Careful consideration is more important than speed.  
+- **Participation is voluntary.** You may opt out of this study at any time, with no negative consequences.  
