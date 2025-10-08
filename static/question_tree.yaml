@@ -1,12 +1,12 @@
 claim_identification:
-  question: Does **Tweet text ** make a claim? (either explicitly or implicitly)
+  question: Does the Tweet text (💬) make a claim? (either explicitly or implicitly)
   mandatory_text: no
   explanation: Here we focus only on the Tweet's text, and not the image and/or text embedded within the image.
   answers:
     I don't know:
       label: unsure
     no:
-      question: Does the image 🖼️ contain any text?
+      question: Does the image (🖼️) contain any text?
       mandatory_text: no
       explanation: In this case, we do not care about small spans of text that appears in a natural scene, like a street name on a traffic sign, unless the text is significant to the claim.
       answers:
@@ -15,7 +15,7 @@ claim_identification:
         no:
           label: no text in image
         yes:
-          question: Does the **text in the image 🖼️** contain a claim?
+          question: Does the text in the image (🖼️) contain a claim?
           mandatory_text: yes-both
           explanation: If yes, what is it?
           answers:
@@ -26,7 +26,7 @@ claim_identification:
             no:
               label: no textual claim in the text
       yes:
-        question: Does the image 🖼️ contain any text?
+        question: Does the image (🖼️) contain any text?
         mandatory_text: no
         explanation: In this case, we do not care about small spans of text that appears in a natural scene, like a street name on a traffic sign, unless the text is significant to the claim.
         answers:
@@ -35,7 +35,7 @@ claim_identification:
           no:
             label: no text in image
           yes:
-            question: Does the **text in the image 🖼️** contain a claim?
+            question: Does the text in the image (🖼️) contain a claim?
             mandatory_text: yes-both
             explanation: If yes, what is it?
             answers:
