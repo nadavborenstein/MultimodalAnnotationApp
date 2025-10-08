@@ -14,7 +14,7 @@ In this study, you will be asked  to analyze images and text posted by X (Twitte
 On each screen, you will see:
 - **Tweet text (💬)**: The text of a tweet that has been identified as misleading.  
 - **Image (🖼️)**: The image(s) attached to that tweet.  
-- **Additional context**: text written by another user, explaining why the tweet text and/or image is misleading.
+- **Additional context (💡)**: text written by another user, explaining why the tweet text and/or image is misleading.
 
 You will see **NUM_QUESTIONS pairs** of Tweets & images in total. For each tweet and image pair, there are 3 main steps to complete.
 
@@ -43,7 +43,7 @@ Then, answer the question “Does the tweet and/or image make a claim?”. If an
 
 If the tweet or image **does make a claim**:  
 
-1. Read the *Additional context* and understand **why the claim is misleading**. 
+1. Read the *Additional context 💡* and understand **why the claim is misleading**. 
 2. Answer a short series of **4–8 questions** about the image, the tweet’s text, and their relationship.
 
 
@@ -52,7 +52,7 @@ Each question will include:
 - A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
 - A **“Confirm” button** to move forward to the next question. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
 
-⚠️ **Assume the "Additional context" is correct, and use the information provided to answer the questions.**  You do **not** need to do your own research about the claim,
+⚠️ **Assume the "Additional context 💡" is correct, and use the information provided to answer the questions.**  You do **not** need to do your own research about the claim,
 
 
 

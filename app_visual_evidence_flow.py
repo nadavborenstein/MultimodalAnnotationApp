@@ -486,7 +486,7 @@ with container:
         # st.write(tweet_text)
         st.markdown("---")
         with st.container(border=False):
-            title = "Additional context"
+            title = "Additional context 💡"
             st.markdown(
                 f'<div style="background-color:#E8F6FF;Height:auto" dir="auto"><h3>{title}</h3>{note_text}</div>',
                 unsafe_allow_html=True,
@@ -504,7 +504,7 @@ with placeholder.container():
         f"**Does the tweet and/or image make a claim? (either explicitly or implicitly)**"
     )
     st.pills(
-        "**Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false.\n**.Remember:** the claim can be implicit, for example, sharing a fake image with the Tweet text implicitly claiming that the image is real (e.g., 'Look at this! It is terrible!').",
+        "**Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false.\n\n**Remember:** the claim can be implicit, for example, sharing a fake image with the Tweet text implicitly claiming that the image is real (e.g., 'Look at this! It is terrible!').",
         ["Yes", "No"],
         selection_mode="single",
         key="has_claim",
