@@ -476,7 +476,8 @@ with container:
     image_col, text_col = st.columns([3, 2])
     with image_col:
         st.subheader("Tweet image 🖼️")
-        st.image(image_data)
+        with st.container(border=True):
+            st.image(image_data)
     with text_col:
         st.subheader("Tweet text 💬")
         st.markdown(
