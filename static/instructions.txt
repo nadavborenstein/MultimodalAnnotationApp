@@ -52,7 +52,7 @@ Each question will include:
 - A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
 - A **“Confirm” button** to move forward to the next question. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
 
-⚠️ Assume the "Additional context" is correct, and use the information provided to answer the questions. 
+⚠️ **Assume the "Additional context" is correct, and use the information provided to answer the questions.** 
 
 
 ---
