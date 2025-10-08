@@ -120,7 +120,7 @@ text:
     I don't know:
       label: unsure
     yes:
-      question: Does the claim (Tweet text 💬 and/or Image text 🖼️) reference or refer to the image at all?
+      question: Does the image provide any additional information or evidence for the claim?
       mandatory_text: no
       explanation: Answer "No" if the claim is completely independent of the image, and the image's only purpose is to make the post more attractive or attention-grabbing.
       answers:
