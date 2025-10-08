@@ -107,7 +107,7 @@ def record_non_participation():
 
 @st.cache_resource
 def load_question_tree() -> dict:
-    file = conn.fs.open(QUESTION_TREE, "r")
+    file = open(QUESTION_TREE, "r")
     question_tree = yaml.safe_load(file)
 
     # replace boolean keys with "yes" and "no"
