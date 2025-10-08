@@ -8,7 +8,7 @@ claim_identification:
     no:
       question: Does the image (🖼️) contain any text?
       mandatory_text: no
-      explanation: In this case, we do not care about small spans of text that appears in a natural scene, like a street name on a traffic sign, unless the text is significant to the claim.
+      explanation: Here we do not care about small spans of text that appear in a natural scene, like a street name on a traffic sign, unless the text is significant to the claim.
       answers:
         I don't know:
           label: unsure
@@ -47,7 +47,7 @@ claim_identification:
                 label: no textual claim in the text
 
 image:
-  question: Does the image seem fake, edited, AI-generated, or manipulated in any way?
+  question: Does the image seem fake, edited, AI-generated, or digitally manipulated in any way?
   mandatory_text: no
   explanation: Please consult the "Additional Context" if you are not sure.
   answers:
@@ -56,7 +56,7 @@ image:
     no:
       question: Does the image depict information from an unreliable or unverifiable source (e.g., parody accounts, impostors, etc.)? If so, who?
       mandatory_text: yes-yes
-      explanation: For example, does the image contain **screenshots** depicting unreliable accounts or media platforms? **Importantly**, answer "Yes" only if the "Additional Context" determined that the source is unreliable or unverifiable (do not rely on your own intuition). 
+      explanation: For example, **screenshot(s)** depicting unreliable accounts or media platforms? **Importantly**, answer "Yes" only if the "Additional Context" indicates that the source is unreliable or unverifiable (do not rely on your own intuition or research). 
       answers:
         I don't know:
           label: unsure
@@ -76,10 +76,10 @@ image:
     yes:
       question: Is the image completely AI-generated?
       mandatory_text: no
-      explanation: Is it a fake image that was created entirely by AI? If the image is based on a real image, answer "no".
+      explanation: Is it a fake image that was created entirely using AI? If the image is based on a real image that has been edited with AI, answer "no".
       answers:
         yes:
-          question: Does the tweet claim or insinuate that the AI-generated image is authentic?
+          question: Does the tweet claim or suggest that the AI-generated image is authentic?
           mandatory_text: no
           explanation: That is, is the tweet misleading because it claims that a fake image is real?
           answers:
@@ -90,7 +90,7 @@ image:
             no:
               label: benign edits
         no:
-          question: Does the image contain any fake information? If yes, what are they?
+          question: Does the image contain any false information? If yes, what is it?
           mandatory_text: yes-yes
           explanation: For example, does the image contain fake headlines, fake quotes, or fake statistics?
           answers:
@@ -111,32 +111,32 @@ image:
                   label: benign edits
           
 text:
-  question: Would the claim (made by 💬 and/or 🖼️) be clear or complete even without the image?
+  question: Would the claim (made in the Tweet text 💬 and/or Image text 🖼️) be clear or complete even without the image?
   mandatory_text: no
   explanation: Example of "Yes:" attaching an image of an American flag to a tweet containing a claim about the American job market.\nExample of "No:" attaching an image of a graph that shows data about the American job market to a tweet discussing the data. 
   answers:
     I don't know:
       label: unsure
     yes:
-      question: Does the claim (💬 and/or 🖼️) refer to the image at all? 
+      question: Does the claim (Tweet text 💬 and/or Image text 🖼️) reference or refer to the image at all?
       mandatory_text: no
-      explanation: Answer "No" if the claim is completely independent of the image, and the image's only purpose to make the post more attractive or attention-grabbing.
+      explanation: Answer "No" if the claim is completely independent of the image, and the image's only purpose is to make the post more attractive or attention-grabbing.
       answers:
         I don't know:
           label: unsure
         yes:
-          question: Does the tweet claim that the image is fake, edited, or staged?
+          question: Does the text claim that the image is fake, edited, or staged?
           mandatory_text: no
-          explanation: That is, does the tweet **deny** the authenticity or validity of the image?
+          explanation: That is, does the text **deny** the authenticity or validity of the image?
           answers:
             I don't know:
               label: unsure
             yes:
               label: denial
             no:
-              question: Does the text make an incorrect claim about the content or context of the image (e.g., incorrect time/place, wrong person, incorrect event)? If yes, specify what it is.
+              question: Does the text make an incorrect claim about the content or context of the image (e.g., incorrect time/place, incorrect person, incorrect event)? If yes, specify what it is.
               mandatory_text: yes-yes
-              explanation: Focus on **factual** mismatches between the content of the image and the content of Tweet text.
+              explanation: Focus on **factual** mismatches between the content of the image and the content of Tweet text. For example, does the text wrongly claim that an old image is of a recent event?
               answers:
                 I don't know:
                   label: unsure
@@ -145,7 +145,7 @@ text:
                 no:
                   question: Does the text describe the image in a misleading way?
                   mandatory_text: yes-both
-                  explanation: Does the text misinterpret (intentionally or unintentionally) the meaning or consequences of the image (e.g., drawing false or exaggerated conclusions from the image)?
+                  explanation: Does the text misinterpret (intentionally or unintentionally) the meaning or consequences of the image? In other words, does it  draw false or exaggerated conclusions from the image?
                   answers:
                     I don't know:
                       label: unsure
@@ -158,7 +158,7 @@ text:
     no:
       question: Does the tweet claim that the image is fake, edited, or staged?
       mandatory_text: no
-      explanation: That is, does the tweet **deny** the authenticity or validity of the image?
+      explanation: That is, does the text **deny** the authenticity or validity of the image?
       answers:
         I don't know:
           label: unsure
@@ -167,7 +167,7 @@ text:
         no:
           question: Does the text make an incorrect claim about the content or context of the image (e.g., incorrect time/place, wrong person, incorrect event)? If yes, specify what it is.
           mandatory_text: yes-yes
-          explanation: Focus on **factual** mismatches between the content of the image and the content of Tweet text.
+          explanation: Focus on **factual** mismatches between the content of the image and the content of Tweet text. For example, does the text wrongly claim that an old image is of a recent event?
           answers:
             I don't know:
               label: unsure
@@ -176,7 +176,7 @@ text:
             no:
               question: Does the text describe the image in a misleading way?
               mandatory_text: yes-both
-              explanation: Does the text misinterpret (intentionally or unintentionally) the meaning or consequences of the image (e.g., drawing false or exaggerated conclusions from the image)?
+              explanation: Does the text misinterpret (intentionally or unintentionally) the meaning or consequences of the image? In other words, does it  draw false or exaggerated conclusions from the image?
               answers:
                 I don't know:
                   label: unsure

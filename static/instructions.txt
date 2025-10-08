@@ -32,7 +32,7 @@ You will see **NUM_QUESTIONS pairs** of Tweets & images in total. For each tweet
 
 Then, answer the question “Does the tweet and/or image make a claim?”. If answered "No", briefly explain your choice. If answered "Yes", briefly describe the claim in your own words. 
 
-⚠️ Claims can be either explicit (e.g., the tweet’s text stating “16 billion passwords have been leaked from Google yesterday”) or implicit (e.g., the tweet’s text is “look at this mess!”, and the image is a photo of a protest. Then, the implicit claim is “this protest took place, and was messy”.). 
+⚠️ Claims can be either explicit (e.g., the tweet’s text stating “16 billion passwords have been leaked from Google yesterday”) or implicit (e.g., the tweet’s text is “look at this mess!”, and the image is a photo of a protest. In this case, the implicit claim is “this protest took place, and was messy”.). 
 
 ⚠️ The claims can be made either by the tweet’s text or by the image. Even if the Tweet’s text (💬) is empty, the image (🖼️) may still contain a claim.
 
@@ -52,7 +52,8 @@ Each question will include:
 - A **free-text field** to justify your choice (mandatory or optional, depending on the question).  
 - A **“Confirm” button** to move forward to the next question. ⚠️ Once you press “Confirm,” you cannot go back and change your answer.  
 
-⚠️ **Assume the "Additional context" is correct, and use the information provided to answer the questions.** 
+⚠️ **Assume the "Additional context" is correct, and use the information provided to answer the questions.**  You do **not** need to do your own research about the claim,
+
 
 
 ---
