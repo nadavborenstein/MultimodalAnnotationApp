@@ -25,26 +25,26 @@ claim_identification:
               label: textual claim in image
             no:
               label: no textual claim in the text
-      yes:
-        question: Does the image (🖼️) contain any text?
-        mandatory_text: no
-        explanation: In this case, we do not care about small spans of text that appears in a natural scene, like a street name on a traffic sign, unless the text is significant to the claim.
-        answers:
-          I don't know:
-            label: unsure
-          no:
-            label: no text in image
-          yes:
-            question: Does the text in the image (🖼️) contain a claim?
-            mandatory_text: yes-both
-            explanation: If yes, what is it?
-            answers:
-              I don't know:
-                label: unsure
-              yes:
-                label: textual claim in image
-              no:
-                label: no textual claim in the text
+    yes:
+      question: Does the image (🖼️) contain any text?
+      mandatory_text: no
+      explanation: In this case, we do not care about small spans of text that appears in a natural scene, like a street name on a traffic sign, unless the text is significant to the claim.
+      answers:
+        I don't know:
+          label: unsure
+        no:
+          label: no text in image
+        yes:
+          question: Does the text in the image (🖼️) contain a claim?
+          mandatory_text: yes-both
+          explanation: If yes, what is it?
+          answers:
+            I don't know:
+              label: unsure
+            yes:
+              label: textual claim in image
+            no:
+              label: no textual claim in the text
 
 image:
   question: Does the image seem fake, edited, AI-generated, or digitally manipulated in any way?
