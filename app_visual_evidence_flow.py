@@ -181,6 +181,7 @@ def load_done() -> set:
 def load_images(image_names) -> list:
     images = dict()
     for image_name in image_names:
+        st.write(f"Loading image {image_name}...")
         image_path = os.path.join(IMAGE_FOLDER, image_name)
         image_data = conn.fs.open(image_path, "rb").read()
         images[image_name] = image_data
