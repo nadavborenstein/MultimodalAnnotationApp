@@ -26,12 +26,12 @@ NO_CONCENT_CODE = "C1B7DNHB"
 NO_CONCENT_LINK = f"https://app.prolific.com/submissions/complete?cc={NO_CONCENT_CODE}"
 
 
-ADD_QUALIFICATIONS = False
+ADD_QUALIFICATIONS = True
 QUALIFICATION_NOTES = "annotation-experiment/data/en_qualification_data.csv"
 INSTRUCTIONS_FILE = "static/instructions.txt"
 QUALIFICATION_IMAGE_FOLDER = "annotation-experiment/static/qualification_images/"
 QUESTION_TREE = "static/question_tree.yaml"
-MAX_ANNOTATIONS_PER_WORKER = 60  # TODO: adjust as needed
+MAX_ANNOTATIONS_PER_WORKER = 1  # TODO: adjust as needed
 ID_COL = "tweet_id"
 IMAGE_FOLDER = "annotation-experiment/static/resized_images/"
 PROGRESS_FOLDER = f"annotation-experiment/data/worker_progress/{TASK_NAME}"
