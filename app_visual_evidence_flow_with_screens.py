@@ -99,6 +99,9 @@ def is_disqualified() -> bool:
         worker_answers = [(q, a) for q, a, _ in worker_answers]
         for q, a in QAs:
             if (q, a) not in worker_answers:
+                st.write(q)
+                st.write(a)
+                st.write(worker_answers)
                 st.session_state.qualification_status = True
                 return True
 
@@ -482,7 +485,7 @@ with st.spinner("**Loading images...**", show_time=True):
 
 if is_disqualified():
     st.success(
-        "Your responses didn't meet the criteria we are looking for in our study. You will still be paid for your time.."
+        "Your responses didn't meet the criteria we are looking for in our study. You will still be paid for your time."
     )
     st.success(
         f"Click on the link below or copy and paste the following code into Prolific to receive payment: {SCREENED_CODE}"
