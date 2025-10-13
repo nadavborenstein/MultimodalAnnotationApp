@@ -185,4 +185,4 @@ text:
                 yes:
                   label: slanted
                 no:
-                  question: other issues
+                  label: other issues
