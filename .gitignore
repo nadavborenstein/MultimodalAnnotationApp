@@ -3,3 +3,4 @@ static/images
 static/resized_images
 static/qualification_images
 *.ipynb
+.DS_Store
