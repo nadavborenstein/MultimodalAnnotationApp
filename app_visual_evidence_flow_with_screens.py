@@ -236,7 +236,8 @@ def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
         seed = hash(st.session_state.worker_id) % (2**31)
         done_notes = load_done()
         notes = notes[~notes.index.isin(done_notes)]
-
+        st.write(notes.shape)
+        st.write(notes.head())
         if ADD_QUALIFICATIONS:
             qualifications = notes[notes["qualification"]]
             non_qualifications = notes[~notes["qualification"]].sample(
