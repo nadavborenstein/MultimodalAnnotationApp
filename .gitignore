@@ -4,3 +4,6 @@ static/resized_images
 static/qualification_images
 *.ipynb
 .DS_Store
+Results.csv
+results/
+data/en_qualification_data_results.csv
