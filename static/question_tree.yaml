@@ -127,7 +127,7 @@ text:
         I don't know:
           label: unsure
         yes:
-          question: Does the text claim that the image is fake, edited, or staged?
+          question: Does the tweet claim that the image is fake, edited, or staged?
           mandatory_text: no
           explanation: That is, does the text **deny** the authenticity or validity of the image?
           answers:

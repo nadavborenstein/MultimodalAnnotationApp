@@ -485,7 +485,7 @@ with st.spinner("**Loading images...**", show_time=True):
 
 if is_disqualified():
     st.success(
-        "Your responses didn't meet the criteria we are looking for in our study. You will still be paid for your time."
+        "Thank you for participating in this experiment! Unfortunately, your responses didn't meet the criteria we are looking for in our study, but you will still be paid for your time."
     )
     st.success(
         f"Click on the link below or copy and paste the following code into Prolific to receive payment: {SCREENED_CODE}"
