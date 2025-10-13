@@ -189,6 +189,7 @@ def load_notes() -> pd.DataFrame:
     notes = notes.drop_duplicates(subset=["image_name"])
     if DEBUGGING:
         notes = notes.head(NUM_NOTES_IN_DEBUGGING)
+    st.write(notes.head())
     notes.set_index(ID_COL, inplace=True, drop=False)
 
     if ADD_QUALIFICATIONS:
