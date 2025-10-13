@@ -12,7 +12,6 @@ from time import time
 st.set_page_config(layout="wide")
 conn = st.connection("gcs", type=FilesConnection)
 
-
 NOTES = "annotation-experiment/data/tweets_with_images.csv"
 MAX_ANNOTATIONS_PER_WORKER = 25  # TODO: adjust as needed
 ID_COL = "tweetId"
