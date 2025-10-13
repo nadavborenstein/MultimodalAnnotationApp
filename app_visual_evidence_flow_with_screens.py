@@ -181,16 +181,12 @@ def load_qualification_notes() -> pd.DataFrame:
 def load_notes() -> pd.DataFrame:
     notes = conn.fs.open(NOTES, "r").read()
     notes = pd.read_csv(io.StringIO(notes))
-    st.write(notes.shape)
     notes = notes[notes["language_present"] == LANGUAGE]
-    st.write(notes.shape)
     # seed from worker_id
     images = conn.fs.glob(f"{IMAGE_FOLDER}*.jpeg")
     image_names = [os.path.basename(img) for img in images]
     notes = notes[notes["image_name"].isin(image_names)]
-    st.write(notes.shape)
     notes = notes.drop_duplicates(subset=["image_name"])
-    st.write(notes.shape)
     if DEBUGGING:
         notes = notes.head(NUM_NOTES_IN_DEBUGGING)
     notes.set_index(ID_COL, inplace=True, drop=False)
@@ -240,8 +236,6 @@ def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
         seed = hash(st.session_state.worker_id) % (2**31)
         done_notes = load_done()
         notes = notes[~notes.index.isin(done_notes)]
-        st.write(notes.shape)
-        st.write(notes.head())
         if ADD_QUALIFICATIONS:
             qualifications = notes[notes["qualification"]]
             non_qualifications = notes[~notes["qualification"]].sample(
