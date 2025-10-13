@@ -67,7 +67,7 @@ image:
           mandatory_text: yes-yes
           explanation: Please consult the "Additional Context 💡" if you are not sure.
           answers:
-            unsure:
+            I don't know:
               label: unsure
             no:
               label: Nothing wrong
@@ -136,7 +136,7 @@ text:
             yes:
               label: denial
             no:
-              question: Does the text make an incorrect claim about the content or context of the image (e.g., incorrect time/place, incorrect person, incorrect event)? If yes, specify what it is.
+              question: Does the text make an incorrect claim about the content or context of the image (e.g., incorrect time/place, wrong person, incorrect event)? If yes, specify what it is.
               mandatory_text: yes-yes
               explanation: Focus on **factual** mismatches between the content of the image and the content of Tweet text. For example, does the text wrongly claim that an old image is of a recent event?
               answers:
