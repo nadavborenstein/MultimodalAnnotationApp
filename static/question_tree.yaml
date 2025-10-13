@@ -15,7 +15,7 @@ claim_identification:
         no:
           label: no text in image
         yes:
-          question: Does the text in the image (🖼️) contain a claim?
+          question: Does the *text* in the image (🖼️) contain a claim?
           mandatory_text: yes-both
           explanation: If yes, what is it?
           answers:
@@ -47,7 +47,7 @@ claim_identification:
               label: no textual claim in the text
 
 image:
-  question: Does the image seem fake, edited, AI-generated, or digitally manipulated in any way?
+  question: Is the image fake, edited, AI-generated, or digitally manipulated in any way?
   mandatory_text: no
   explanation: Please consult the "Additional Context 💡" if you are not sure.
   answers:

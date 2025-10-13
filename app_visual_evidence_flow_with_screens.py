@@ -557,7 +557,7 @@ claim = True
 placeholder = st.empty()
 with placeholder.container():
     st.markdown(
-        f"**Does the tweet and/or image make a claim? (either explicitly or implicitly)**"
+        f"**Does the post (Tweet text 💬 or Image 🖼️) make a claim? (either explicitly or implicitly)**"
     )
     st.pills(
         "**Claim**: A statement that asserts something about reality, which can, in principle, be evaluated as true or false.\n\n**Remember:** the claim can be implicit, for example, sharing a fake image with the Tweet text implicitly claiming that the image is real (e.g., 'Look at this! It is terrible!').",
