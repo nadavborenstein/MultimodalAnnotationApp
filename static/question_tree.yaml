@@ -56,7 +56,9 @@ image:
     no:
       question: Does the image depict information from an unreliable or unverifiable source (e.g., parody accounts, impostors, etc.)? If so, who?
       mandatory_text: yes-yes
-      explanation: For example, **screenshot(s)** depicting unreliable accounts or media platforms? **Importantly**, answer "Yes" only if the "Additional Context 💡" indicates that the source is unreliable or unverifiable (do not rely on your own intuition or research). 
+      explanation: |
+        **Example**: *screenshot(s)* depicting unreliable accounts or media platforms? 
+        **Importantly**, answer "Yes" only if the "Additional Context 💡" indicates that the source is unreliable or unverifiable (do not rely on your own intuition or research). 
       answers:
         I don't know:
           label: unsure
