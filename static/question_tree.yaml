@@ -103,7 +103,9 @@ image:
             no:
               question: Are the edits or manipulations misleading? i.e., are these edits the source of the misinformation? If so, what are they?
               mandatory_text: yes-yes
-              explanation: For example, do the edits mislead people by creating false evidence for the claim, omitting a key part of the image, or falsely labelling the image? Non-misleading edits could include changes that do not affect the meaning of the image, e.g., creating a collage.
+              explanation: | 
+                For example, do the edits mislead people by creating false evidence for the claim, omitting a key part of the image, or falsely labelling the image? 
+                Non-misleading edits could include changes that do not affect the meaning of the image, e.g., creating a collage.
               answers:
                 I don't know:
                   label: unsure
@@ -140,7 +142,9 @@ text:
             no:
               question: Does the text make an incorrect claim about the content or context of the image (e.g., incorrect time/place, wrong person, incorrect event)? If yes, specify what it is.
               mandatory_text: yes-yes
-              explanation: Focus on **factual** mismatches between the content of the image and the content of Tweet text. For example, does the text wrongly claim that an old image is of a recent event?
+              explanation: | 
+                Focus on **factual** mismatches between the content of the image and the content of Tweet text. 
+                **Example:** does the text wrongly claim that an old image is of a recent event?
               answers:
                 I don't know:
                   label: unsure
@@ -171,7 +175,9 @@ text:
         no:
           question: Does the text make an incorrect claim about the content or context of the image (e.g., incorrect time/place, wrong person, incorrect event)? If yes, specify what it is.
           mandatory_text: yes-yes
-          explanation: Focus on **factual** mismatches between the content of the image and the content of Tweet text. For example, does the text wrongly claim that an old image is of a recent event?
+          explanation: |
+            Focus on **factual** mismatches between the content of the image and the content of Tweet text. 
+            **Example:** does the text wrongly claim that an old image is of a recent event?
           answers:
             I don't know:
               label: unsure
