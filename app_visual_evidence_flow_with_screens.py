@@ -18,7 +18,7 @@ st.set_page_config(layout="wide")
 conn = st.connection("gcs", type=FilesConnection)
 
 LANGUAGE = "en"
-TASK_NAME = f"visual_evidence_head_{LANGUAGE}"
+TASK_NAME = f"visual_evidence_with_screens_{LANGUAGE}"
 NOTES = "annotation-experiment/data/multimodal_tweets_balanced.csv"
 DEEPEST_NODE = 6
 
@@ -27,7 +27,7 @@ DONE_LINK = f"https://app.prolific.com/submissions/complete?cc={DONE_CODE}"
 NO_CONCENT_CODE = "C1B7DNHB"
 NO_CONCENT_LINK = f"https://app.prolific.com/submissions/complete?cc={NO_CONCENT_CODE}"
 
-SCREENED_CODE = "MEEP"
+SCREENED_CODE = "CJF3RLOA"
 SCREENED_LINK = f"https://app.prolific.com/submissions/complete?cc={SCREENED_CODE}"
 
 ADD_QUALIFICATIONS = True
