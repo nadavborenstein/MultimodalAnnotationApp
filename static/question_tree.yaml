@@ -58,7 +58,7 @@ image:
       mandatory_text: yes-yes
       explanation: |
         **Example**: *screenshot(s)* depicting unreliable accounts or media platforms? 
-        
+
         **Importantly**, answer "Yes" only if the "Additional Context 💡" indicates that the source is unreliable or unverifiable (do not rely on your own intuition or research). 
       answers:
         I don't know:
@@ -106,6 +106,7 @@ image:
               mandatory_text: yes-yes
               explanation: | 
                 For example, do the edits mislead people by creating false evidence for the claim, omitting a key part of the image, or falsely labelling the image? 
+
                 Non-misleading edits could include changes that do not affect the meaning of the image, e.g., creating a collage.
               answers:
                 I don't know:
@@ -120,6 +121,7 @@ text:
   mandatory_text: no
   explanation: |
     Example of "Yes:" attaching an image of an American flag to a tweet containing a claim about the American job market. 
+
     Example of "No:" attaching an image of a graph that shows data about the American job market to a tweet discussing the data. 
   answers:
     I don't know:
@@ -145,6 +147,7 @@ text:
               mandatory_text: yes-yes
               explanation: | 
                 Focus on **factual** mismatches between the content of the image and the content of Tweet text. 
+
                 **Example:** does the text wrongly claim that an old image is of a recent event?
               answers:
                 I don't know:
@@ -178,6 +181,7 @@ text:
           mandatory_text: yes-yes
           explanation: |
             Focus on **factual** mismatches between the content of the image and the content of Tweet text. 
+            
             **Example:** does the text wrongly claim that an old image is of a recent event?
           answers:
             I don't know:

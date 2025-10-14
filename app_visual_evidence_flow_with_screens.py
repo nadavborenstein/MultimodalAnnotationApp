@@ -99,9 +99,6 @@ def is_disqualified() -> bool:
         worker_answers = [(q, a) for q, a, _ in worker_answers]
         for q, a in QAs:
             if (q, a) not in worker_answers:
-                st.write(q)
-                st.write(a)
-                st.write(worker_answers)
                 st.session_state.qualification_status = True
                 return True
 
