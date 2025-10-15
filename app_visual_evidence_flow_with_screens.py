@@ -399,13 +399,6 @@ st.text_input(
     disabled="worker_id" in st.session_state and len(st.session_state.worker_id),
     help="Your Prolific ID is used to track your progress and ensure you do not annotate the same item multiple times.",
 )
-if not st.session_state.worker_id:
-    st.warning("Please enter your Prolific ID to proceed.")
-    st.stop()
-else:
-    st.success(
-        f"Thank you for providing your Prolific ID: {st.session_state.worker_id}."
-    )
 
 st.markdown(
     """
@@ -418,6 +411,15 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+if not st.session_state.worker_id:
+    st.warning("Please enter your Prolific ID to proceed.")
+    st.stop()
+else:
+    st.success(
+        f"Thank you for providing your Prolific ID: {st.session_state.worker_id}."
+    )
+
 
 st.header("Consent")
 st.pills(
