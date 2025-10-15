@@ -407,6 +407,9 @@ st.markdown(
     if (input) {
         input.onpaste = () => false;
     }
+    else {
+        console.warn("Could not find the input element to disable paste.");
+    }
     </script>
     """,
     unsafe_allow_html=True,
