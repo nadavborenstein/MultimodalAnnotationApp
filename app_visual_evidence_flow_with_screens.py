@@ -400,21 +400,6 @@ st.text_input(
     help="Your Prolific ID is used to track your progress and ensure you do not annotate the same item multiple times.",
 )
 
-st.markdown(
-    """
-    <script>
-    const input = window.parent.document.querySelector('input[type="text"]');
-    if (input) {
-        input.onpaste = () => false;
-    }
-    else {
-        console.warn("Could not find the input element to disable paste.");
-    }
-    </script>
-    """,
-    unsafe_allow_html=True,
-)
-
 if not st.session_state.worker_id:
     st.warning("Please enter your Prolific ID to proceed.")
     st.stop()
