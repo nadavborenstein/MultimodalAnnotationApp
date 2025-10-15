@@ -407,6 +407,18 @@ else:
         f"Thank you for providing your Prolific ID: {st.session_state.worker_id}."
     )
 
+st.markdown(
+    """
+    <script>
+    const input = window.parent.document.querySelector('input[type="text"]');
+    if (input) {
+        input.onpaste = () => false;
+    }
+    </script>
+    """,
+    unsafe_allow_html=True,
+)
+
 st.header("Consent")
 st.pills(
     label="Do you consent to participate in this study?",
