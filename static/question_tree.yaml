@@ -35,7 +35,7 @@ claim_identification:
         no:
           label: no text in image
         yes:
-          question: Does the text in the image (🖼️) contain a claim?
+          question: Does the *text* in the image (🖼️) contain a claim?
           mandatory_text: yes-both
           explanation: If yes, what is it?
           answers:
@@ -127,7 +127,7 @@ text:
     I don't know:
       label: unsure
     yes:
-      question: Does the image provide any additional information or evidence for the claim?
+      question: Does the image provide any additional information or evidence (even if it is false) for the claim?
       mandatory_text: no
       explanation: Answer "No" if the claim is completely independent of the image, and the image's only purpose is to make the post more attractive or attention-grabbing.
       answers:
@@ -148,7 +148,7 @@ text:
               explanation: | 
                 Focus on **factual** mismatches between the content of the image and the content of Tweet text. 
 
-                **Example:** does the text wrongly claim that an old image is of a recent event?
+                **Example:** The text wrongly claim that an old image is of a recent event.
               answers:
                 I don't know:
                   label: unsure
@@ -164,7 +164,7 @@ text:
                     yes:
                       label: slanted
                     no:
-                      question: other issues
+                      label: other issues
         no:
           label: decorative
     no:
@@ -181,8 +181,8 @@ text:
           mandatory_text: yes-yes
           explanation: |
             Focus on **factual** mismatches between the content of the image and the content of Tweet text. 
-            
-            **Example:** does the text wrongly claim that an old image is of a recent event?
+
+            **Example:** The text wrongly claim that an old image is of a recent event.
           answers:
             I don't know:
               label: unsure

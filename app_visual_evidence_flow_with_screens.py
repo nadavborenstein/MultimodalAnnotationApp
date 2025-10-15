@@ -304,10 +304,10 @@ def collect_selected_labels() -> list:
     Returns a list of selected labels.
     """
     labels = []
-    if "has_claim" in st.session_state and st.session_state.has_claim == "No":
+    if "has_claim" in st.session_state:
         labels.append(
             (
-                "It is impossible to annotate this image",
+                "Does the post (Tweet text or Image) make a claim?",
                 st.session_state.has_claim,
                 st.session_state.has_claim_text,
             )
