@@ -11,6 +11,7 @@ from time import time
 import re
 import yaml
 import time
+from datetime import datetime
 import pickle
 from typing import Tuple, List, Dict
 
@@ -256,6 +257,7 @@ def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
                 "label": [None] * len(ids_to_label),
                 "image_name": notes_to_label["image_name"].tolist(),
                 "qualification": notes_to_label["qualification"].tolist(),
+                "time_completed": [None] * len(ids_to_label),
             }
         )
         progress.set_index(ID_COL, inplace=True, drop=False)
@@ -330,6 +332,9 @@ def confirm_label(note: pd.Series):
     index = note[ID_COL]
     st.session_state.progress.at[index, "done"] = True
     st.session_state.progress.at[index, "label"] = str(selected_labels)
+    st.session_state.progress.at[index, "time_completed"] = datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
     clear_selections()
     s = st.session_state.progress.to_csv(index=False)
     conn.fs.open(progress_file, "w").write(s)
