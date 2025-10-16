@@ -2,4 +2,4 @@ pandas
 st-files-connection
 gcsfs
 pyyaml
-streamlit_theme
+st-theme
