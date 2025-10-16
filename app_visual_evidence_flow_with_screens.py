@@ -37,7 +37,7 @@ QUALIFICATION_NOTES = "annotation-experiment/data/en_qualification_data.csv"
 INSTRUCTIONS_FILE = "static/instructions.txt"
 QUALIFICATION_IMAGE_FOLDER = "annotation-experiment/static/qualification_images/"
 QUESTION_TREE = "static/question_tree.yaml"
-MAX_ANNOTATIONS_PER_WORKER = 25  # TODO: adjust as needed
+MAX_ANNOTATIONS_PER_WORKER = 5  # TODO: adjust as needed
 ID_COL = "id_str"
 IMAGE_FOLDER = "annotation-experiment/static/resized_images/"
 PROGRESS_FOLDER = f"annotation-experiment/data/worker_progress/{TASK_NAME}"
@@ -388,29 +388,18 @@ def disable_confirm(mandatory_text, ans, text_ans):
 def disable_pasting_script(label):
     script = """
     <script>
-        // Function to disable paste on all matching inputs
+        // Function to disable paste
         function disablePaste() {
-            // Find all inputs
-            const inputs = window.parent.document.querySelectorAll('input');
-            let matchCount = 0;
-            
-            // Loop through and disable paste on all inputs starting with "text_input"
-            for (let input of inputs) {
-                if (input.id && input.id.startsWith('text_input')) {
-                    input.onpaste = function(e) { 
-                        e.preventDefault();
-                        return false; 
-                    };
-                    matchCount++;
-                    console.log('Paste disabled on input:', input.id);
-                }
-            }
-            
-            if (matchCount === 0) {
-                // Retry if no matching inputs found yet
-                setTimeout(disablePaste, 100);
+            const input = window.parent.document.querySelector('input[aria-label="LABEL"]');
+            if (input) {
+                input.onpaste = function(e) { 
+                    e.preventDefault();
+                    return false; 
+                };
+                console.log('Paste disabled on Prolific ID input');
             } else {
-                console.log('Total inputs with paste disabled:', matchCount);
+                // Retry if input not found yet
+                setTimeout(disablePaste, 100);
             }
         }
         
@@ -615,7 +604,12 @@ with placeholder.container():
         value=st.session_state.get(f"has_claim_text", ""),
         help="Please explain your choice in a few words.",
     )
-    components.html(disable_pasting_script(""), height=0)
+    components.html(
+        disable_pasting_script(
+            "If not, explain why. If yes, describe the claim in your own words (**required**)"
+        ),
+        height=0,
+    )
 
     st.checkbox(
         label="Confirm",
@@ -659,10 +653,10 @@ with placeholder:
             )
             if mandatory_text_answer != "None":
                 mandatory_text = True
-                text_input_title = "Explain your choice **(required)**"
+                text_input_title = f"{st.session_state.question_counter}) Explain your choice **(required)**"
             else:
                 mandatory_text = False
-                text_input_title = "Explain your choice (optional)"
+                text_input_title = f"{st.session_state.question_counter}) Explain your choice (optional)"
 
             st.text_input(
                 text_input_title,
@@ -673,6 +667,7 @@ with placeholder:
                 help="Please explain your choice in a few words.",
                 args=[f"claim_question_{i}_text", "Explain your choice"],
             )
+            components.html(disable_pasting_script(text_input_title), height=0)
             st.checkbox(
                 label="Confirm",
                 value=False,
@@ -686,7 +681,7 @@ with placeholder:
                 args=[question, f"claim_question_{i}"],
             )
         if not st.session_state[f"claim_question_{i}_confirm"]:
-            components.html(disable_pasting_script(""), height=0)
+
             st.stop()
         if multi_answers:
             break
