@@ -385,28 +385,12 @@ def disable_confirm(mandatory_text, ans, text_ans):
     return False
 
 
-st.title("Annotation experiment")
-
-if "worker_id" not in st.session_state:
-    placeholder = "ID"
-else:
-    placeholder = st.session_state.worker_id
-
-st.text_input(
-    "Please enter your Prolific ID",
-    key="worker_id",
-    placeholder=placeholder,
-    value=st.session_state.get("worker_id", ""),
-    disabled="worker_id" in st.session_state and len(st.session_state.worker_id),
-    help="Your Prolific ID is used to track your progress and ensure you do not annotate the same item multiple times.",
-)
-
-components.html(
-    """
+def disable_pasting_script(label):
+    script = """
     <script>
         // Function to disable paste
         function disablePaste() {
-            const input = window.parent.document.querySelector('input[aria-label="Please enter your Prolific ID"]');
+            const input = window.parent.document.querySelector('input[aria-label="LABEL"]');
             if (input) {
                 input.onpaste = function(e) { 
                     e.preventDefault();
@@ -422,9 +406,28 @@ components.html(
         // Start attempting to disable paste
         disablePaste();
     </script>
-    """,
-    height=0,
+    """
+    script = script.replace("LABEL", label)
+    return script
+
+
+st.title("Annotation experiment")
+
+if "worker_id" not in st.session_state:
+    placeholder = "ID"
+else:
+    placeholder = st.session_state.worker_id
+
+st.text_input(
+    "Please enter your Prolific ID",
+    key="worker_id",
+    placeholder=placeholder,
+    value=st.session_state.get("worker_id", ""),
+    disabled="worker_id" in st.session_state and len(st.session_state.worker_id),
+    help="Your Prolific ID is used to track your progress and ensure you do not annotate the same item multiple times.",
 )
+components.html(disable_pasting_script("Please enter your Prolific ID"), height=0)
+
 
 if not st.session_state.worker_id:
     st.warning("Please enter your Prolific ID to proceed.")
