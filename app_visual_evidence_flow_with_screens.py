@@ -396,7 +396,7 @@ def disable_pasting_script(label):
                     e.preventDefault();
                     return false; 
                 };
-                console.log('Paste disabled on Prolific ID input');
+                console.log('Paste disabled on Prolific ID input: LABEL');
             } else {
                 // Retry if input not found yet
                 setTimeout(disablePaste, 100);
