@@ -390,20 +390,24 @@ def disable_pasting_script(label):
     <script>
         // Function to disable paste
         function disablePaste() {
-            // Find input by data-testid attribute (Streamlit uses key in this format)
-            const input = window.parent.document.querySelector('input[data-testid="stTextInput"]');
+            // Find all inputs and filter by id pattern
+            const inputs = window.parent.document.querySelectorAll('input');
+            let targetInput = null;
             
-            // Alternative: try finding by the exact key in the id
-            const inputByKey = window.parent.document.querySelector('input[id*="text_input*"]');
-            
-            const targetInput = inputByKey || input;
+            // Look for input with id starting with "text_input"
+            for (let input of inputs) {
+                if (input.id && input.id.startsWith('text_input')) {
+                    targetInput = input;
+                    break;
+                }
+            }
             
             if (targetInput) {
                 targetInput.onpaste = function(e) { 
                     e.preventDefault();
                     return false; 
                 };
-                console.log('Paste disabled on LABEL');
+                console.log('Paste disabled on input:', targetInput.id);
             } else {
                 // Retry if input not found yet
                 setTimeout(disablePaste, 100);
@@ -669,7 +673,9 @@ with placeholder:
                 help="Please explain your choice in a few words.",
                 args=[f"claim_question_{i}_text", "Explain your choice"],
             )
-            components.html(disable_pasting_script(f"claim_question_{i}_text"), height=0)
+            components.html(
+                disable_pasting_script(f"claim_question_{i}_text"), height=0
+            )
             st.checkbox(
                 label="Confirm",
                 value=False,
