@@ -615,7 +615,7 @@ with placeholder.container():
         value=st.session_state.get(f"has_claim_text", ""),
         help="Please explain your choice in a few words.",
     )
-    components.html(disable_pasting_script("has_claim"), height=0)
+    components.html(disable_pasting_script(""), height=0)
 
     st.checkbox(
         label="Confirm",
@@ -673,9 +673,6 @@ with placeholder:
                 help="Please explain your choice in a few words.",
                 args=[f"claim_question_{i}_text", "Explain your choice"],
             )
-            components.html(
-                disable_pasting_script(f"claim_question_{i}_text"), height=0
-            )
             st.checkbox(
                 label="Confirm",
                 value=False,
@@ -689,6 +686,7 @@ with placeholder:
                 args=[question, f"claim_question_{i}"],
             )
         if not st.session_state[f"claim_question_{i}_confirm"]:
+            components.html(disable_pasting_script(""), height=0)
             st.stop()
         if multi_answers:
             break
