@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import random
 import os
 import pandas as pd
@@ -400,19 +401,29 @@ st.text_input(
     help="Your Prolific ID is used to track your progress and ensure you do not annotate the same item multiple times.",
 )
 
-st.markdown(
+components.html(
     """
-<script>
-    // Wait for the input to be rendered
-    setTimeout(function() {
-        const input = window.parent.document.querySelector('input[aria-label="Please enter your Prolific ID"]');
-        if (input) {
-            input.onpaste = function() { return false; };
+    <script>
+        // Function to disable paste
+        function disablePaste() {
+            const input = window.parent.document.querySelector('input[aria-label="Please enter your Prolific ID"]');
+            if (input) {
+                input.onpaste = function(e) { 
+                    e.preventDefault();
+                    return false; 
+                };
+                console.log('Paste disabled on Prolific ID input');
+            } else {
+                // Retry if input not found yet
+                setTimeout(disablePaste, 100);
+            }
         }
-    }, 100);
-</script>
-""",
-    unsafe_allow_html=True,
+        
+        // Start attempting to disable paste
+        disablePaste();
+    </script>
+    """,
+    height=0,
 )
 
 if not st.session_state.worker_id:
