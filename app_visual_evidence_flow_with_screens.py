@@ -396,7 +396,7 @@ def disable_pasting_script(label):
                     e.preventDefault();
                     return false; 
                 };
-                console.log('Paste disabled on Prolific ID input');
+                console.log('Paste disabled on LABEL');
             } else {
                 // Retry if input not found yet
                 setTimeout(disablePaste, 100);
@@ -721,10 +721,10 @@ with placeholder:
 
             if mandatory_text_answer != "None":
                 mandatory_text = True
-                text_input_title = "Explain your choice **(required)**"
+                text_input_title = f"{st.session_state.question_counter}) Explain your choice **(required)**"
             else:
                 mandatory_text = False
-                text_input_title = "Explain your choice (optional)"
+                text_input_title = f"{st.session_state.question_counter}) Explain your choice (optional)"
 
             st.text_input(
                 text_input_title,
