@@ -388,29 +388,29 @@ def disable_confirm(mandatory_text, ans, text_ans):
 def disable_pasting_script(label):
     script = """
     <script>
-        // Function to disable paste
+        // Function to disable paste on all matching inputs
         function disablePaste() {
-            // Find all inputs and filter by id pattern
+            // Find all inputs
             const inputs = window.parent.document.querySelectorAll('input');
-            let targetInput = null;
+            let matchCount = 0;
             
-            // Look for input with id starting with "text_input"
+            // Loop through and disable paste on all inputs starting with "text_input"
             for (let input of inputs) {
                 if (input.id && input.id.startsWith('text_input')) {
-                    targetInput = input;
-                    break;
+                    input.onpaste = function(e) { 
+                        e.preventDefault();
+                        return false; 
+                    };
+                    matchCount++;
+                    console.log('Paste disabled on input:', input.id);
                 }
             }
             
-            if (targetInput) {
-                targetInput.onpaste = function(e) { 
-                    e.preventDefault();
-                    return false; 
-                };
-                console.log('Paste disabled on input:', targetInput.id);
-            } else {
-                // Retry if input not found yet
+            if (matchCount === 0) {
+                // Retry if no matching inputs found yet
                 setTimeout(disablePaste, 100);
+            } else {
+                console.log('Total inputs with paste disabled:', matchCount);
             }
         }
         
