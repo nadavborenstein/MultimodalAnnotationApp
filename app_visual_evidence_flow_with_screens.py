@@ -449,14 +449,44 @@ st.pills(
 
 if st.session_state.consent == "Yes":
     st.session_state.show_consent = False
+    st.success("Thank you for consenting to participate in the study. ")
+elif st.session_state.consent == "No":
+    # hide the rest of the page
+    st.error("You have chosen not to participate in the study.")
+    record_non_participation()
+    st.error(
+        f"Click on the link below or copy and paste the following code into Prolific to confirm your choice: {NO_CONCENT_CODE}"
+    )
+    st.link_button(
+        "Back to Prolific",
+        NO_CONCENT_LINK,
+        type="primary",
+    )
+    st.stop()
+else:
+    st.warning("Please provide your consent to proceed.")
+    st.stop()
+
+
+st.header("LLM usage")
+st.pills(
+    label="Do you consent to **not** the use of LLMs (e.g., ChatGPT) to assist you in this task?",
+    options=["No", "Yes"],
+    key="llm_consent",
+    help="You must consent to not use LLMs in completing this study.",
+    on_change=lambda: st.session_state.update({"show_llm": False}),
+    disabled="LLM" in st.session_state and st.session_state.consent in ["Yes", "No"],
+)
+
+if st.session_state.llm_consent == "Yes":
+    st.session_state.show_llm = False
     st.success(
-        "Thank you for consenting to participate in the study. You can now proceed with the annotation task. Please read the instructions carefully before proceeding."
+        "Thank you for consenting to not use LLMs in this study. You can now proceed with the annotation task. Please read the instructions carefully before proceeding."
     )
     st.warning(
         "**It may take up to 20 seconds for the images to load. Please carefuly read the instructions in the meanwhile.**"
     )
-
-elif st.session_state.consent == "No":
+elif st.session_state.llm_consent == "No":
     # hide the rest of the page
     st.error("You have chosen not to participate in the study.")
     record_non_participation()
@@ -782,12 +812,13 @@ with placeholder:
                 default=None,
                 args=[f"text_question_{i}", question],
             )
+
             if mandatory_text_answer != "None":
                 mandatory_text = True
-                text_input_title = "Explain your choice **(required)**"
+                text_input_title = f"{st.session_state.question_counter}) Explain your choice **(required)**"
             else:
                 mandatory_text = False
-                text_input_title = "Explain your choice (optional)"
+                text_input_title = f"{st.session_state.question_counter}) Explain your choice (optional)"
 
             st.text_input(
                 text_input_title,
