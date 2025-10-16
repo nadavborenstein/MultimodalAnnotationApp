@@ -426,8 +426,6 @@ st.text_input(
     disabled="worker_id" in st.session_state and len(st.session_state.worker_id),
     help="Your Prolific ID is used to track your progress and ensure you do not annotate the same item multiple times.",
 )
-components.html(disable_pasting_script("Please enter your Prolific ID"), height=0)
-
 
 if not st.session_state.worker_id:
     st.warning("Please enter your Prolific ID to proceed.")
@@ -606,6 +604,13 @@ with placeholder.container():
         value=st.session_state.get(f"has_claim_text", ""),
         help="Please explain your choice in a few words.",
     )
+    components.html(
+        disable_pasting_script(
+            "If not, explain why. If yes, describe the claim in your own words (**required**)"
+        ),
+        height=0,
+    )
+
     st.checkbox(
         label="Confirm",
         value=False,
@@ -662,6 +667,7 @@ with placeholder:
                 help="Please explain your choice in a few words.",
                 args=[f"claim_question_{i}_text", "Explain your choice"],
             )
+            components.html(disable_pasting_script(text_input_title), height=0)
             st.checkbox(
                 label="Confirm",
                 value=False,
@@ -728,6 +734,7 @@ with placeholder:
                 help="Please explain your choice in a few words.",
                 args=[f"image_question_{i}_text", "Explain your choice"],
             )
+            components.html(disable_pasting_script(text_input_title), height=0)
             st.checkbox(
                 label="Confirm",
                 value=False,
@@ -790,6 +797,7 @@ with placeholder:
                 help="Please explain your choice in a few words.",
                 args=[f"text_question_{i}_text", "Explain your choice"],
             )
+            components.html(disable_pasting_script(text_input_title), height=0)
             st.checkbox(
                 label="Confirm",
                 value=False,
