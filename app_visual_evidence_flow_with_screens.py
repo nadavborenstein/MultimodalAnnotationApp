@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from streamlit_theme import st_theme
 import random
 import os
 import pandas as pd
@@ -470,7 +471,7 @@ else:
 
 st.header("LLM usage")
 st.pills(
-    label="Do you consent to **not** the use of LLMs (e.g., ChatGPT) to assist you in this task?",
+    label="Do you agree to **not** use LLMs (e.g., ChatGPT) to assist you in this task?",
     options=["No", "Yes"],
     key="llm_consent",
     help="You must consent to not use LLMs in completing this study.",
@@ -603,9 +604,11 @@ with container:
         # st.write(tweet_text)
         st.markdown("---")
         with st.container(border=False):
+            theme = st_theme()["base"]
+            colour = "#E8F6FF" if theme == "light" else "#003554"
             title = "Additional context 💡"
             st.markdown(
-                f'<div style="background-color:#E8F6FF;Height:auto" dir="auto"><h3>{title}</h3>{note_text}</div>',
+                f'<div style="background-color:{colour};Height:auto" dir="auto"><h3>{title}</h3>{note_text}</div>',
                 unsafe_allow_html=True,
             )
 
