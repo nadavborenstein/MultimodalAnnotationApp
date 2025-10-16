@@ -400,6 +400,21 @@ st.text_input(
     help="Your Prolific ID is used to track your progress and ensure you do not annotate the same item multiple times.",
 )
 
+st.markdown(
+    """
+<script>
+    // Wait for the input to be rendered
+    setTimeout(function() {
+        const input = window.parent.document.querySelector('input[aria-label="Please enter your Prolific ID"]');
+        if (input) {
+            input.onpaste = function() { return false; };
+        }
+    }, 100);
+</script>
+""",
+    unsafe_allow_html=True,
+)
+
 if not st.session_state.worker_id:
     st.warning("Please enter your Prolific ID to proceed.")
     st.stop()
