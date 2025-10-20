@@ -47,7 +47,7 @@ NON_PARTICIPANTS_FILE = "annotation-experiment/data/non_participants.txt"
 NUM_ANNOTATORS_PER_ITEM = 6  # TODO: adjust as needed
 
 
-DEBUGGING = True
+DEBUGGING = False
 NUM_NOTES_IN_DEBUGGING = MAX_ANNOTATIONS_PER_WORKER
 
 INSTRUCTIONS = open(INSTRUCTIONS_FILE, "r").read()
@@ -238,14 +238,19 @@ def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
     else:
         seed = hash(st.session_state.worker_id) % (2**31)
         done_notes = load_done()
-        notes = notes[~notes.index.isin(done_notes)]
         if ADD_QUALIFICATIONS:
             qualifications = notes[notes["qualification"]]
-            non_qualifications = notes[~notes["qualification"]].sample(
-                n=min(MAX_ANNOTATIONS_PER_WORKER, len(notes)), random_state=seed
+            non_qualifications = notes[~notes["qualification"]]
+            non_qualifications = non_qualifications[
+                ~non_qualifications.index.isin(done_notes)
+            ]
+            non_qualifications = non_qualifications.sample(
+                n=min(MAX_ANNOTATIONS_PER_WORKER, len(non_qualifications)),
+                random_state=seed,
             )
             notes_to_label = pd.concat([qualifications, non_qualifications])
         else:
+            notes = notes[~notes.index.isin(done_notes)]
             notes_to_label = notes.sample(
                 n=min(MAX_ANNOTATIONS_PER_WORKER, len(notes)), random_state=seed
             )
