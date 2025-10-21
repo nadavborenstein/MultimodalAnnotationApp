@@ -514,7 +514,7 @@ st.header("Instructions")
 expander = st.expander("Instructions", expanded=True, icon="❗️")
 top_inst, bottom_inst = INSTRUCTIONS.split("[IMAGE]")
 expander.markdown(top_inst)
-expander.image("static/layout_sample.png", caption="Figure 1: Layout sample", width=600)
+expander.image("static/layout_sample.png", caption="The layout", width=800)
 expander.markdown(bottom_inst)
 
 with st.spinner("Loading your annotation session...", show_time=True):
