@@ -512,7 +512,10 @@ else:
 
 st.header("Instructions")
 expander = st.expander("Instructions", expanded=True, icon="❗️")
-expander.markdown(INSTRUCTIONS)
+top_inst, bottom_inst = INSTRUCTIONS.split("[IMAGE]")
+expander.markdown(top_inst)
+expander.image("static/layout_sample.png", caption="Figure 1: Layout sample", width=600)
+expander.markdown(bottom_inst)
 
 with st.spinner("Loading your annotation session...", show_time=True):
     notes = load_notes()

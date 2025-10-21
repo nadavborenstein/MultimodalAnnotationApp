@@ -19,7 +19,7 @@ On each screen, you will see:
 You will see **NUM_QUESTIONS pairs** of Tweets & images in total. For each tweet and image pair, there are 3 main steps to complete.
 
 Here is an annotated screenshot of how it looks like:
-![alt text](static/layout_sample.png "Layout")
+[IMAGE]
 
 
 ---
