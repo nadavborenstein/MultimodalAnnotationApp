@@ -20,7 +20,7 @@ from typing import Tuple, List, Dict
 st.set_page_config(layout="wide")
 conn = st.connection("gcs", type=FilesConnection)
 
-LANGUAGE = "en"
+LANGUAGE = "he"
 TASK_NAME = f"visual_evidence_with_screens_{LANGUAGE}"
 NOTES = "annotation-experiment/data/multimodal_tweets_balanced.csv"
 DEEPEST_NODE = 6
