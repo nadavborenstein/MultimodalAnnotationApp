@@ -120,9 +120,9 @@ text:
   question: Would the claim (made in the Tweet text 💬 and/or Image text 🖼️) be clear or complete even without the image?
   mandatory_text: no
   explanation: |
-    Example of "Yes:" attaching an image of an American flag to a tweet containing a claim about the American job market. 
+    **Example of "Yes:"** attaching an image of an American flag to a tweet containing a claim about the American job market. 
 
-    Example of "No:" attaching an image of a graph that shows data about the American job market to a tweet discussing the data. 
+    **Example of "No:"** attaching an image of a graph that shows data about the American job market to a tweet discussing the data. 
   answers:
     I don't know:
       label: unsure
