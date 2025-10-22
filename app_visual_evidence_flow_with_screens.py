@@ -481,14 +481,13 @@ st.pills(
     key="llm_consent",
     help="You must consent to not use LLMs in completing this study.",
     on_change=lambda: st.session_state.update({"show_llm": False}),
-    disabled="LLM" in st.session_state and st.session_state.consent in ["Yes", "No"],
+    disabled="llm_consent" in st.session_state
+    and st.session_state.llm_consent in ["Yes", "No"],
 )
 
 if st.session_state.llm_consent == "Yes":
     st.session_state.show_llm = False
-    st.success(
-        "Thank you for consenting to not use LLMs in this study. You can now proceed with the annotation task. Please read the instructions carefully before proceeding."
-    )
+    st.success("Thank you for consenting to not use LLMs in this study.")
     st.warning(
         "**It may take up to 20 seconds for the images to load. Please carefuly read the instructions in the meanwhile.**"
     )
@@ -507,6 +506,43 @@ elif st.session_state.llm_consent == "No":
     st.stop()
 else:
     st.warning("Please provide your consent to proceed.")
+    st.stop()
+
+
+st.header("Language fluency")
+st.pills(
+    label="Are you a fluent Hebrew speaker?",
+    options=["No", "Yes"],
+    key="language_fluency",
+    help="You must be a fluent Hebrew speaker to participate in this study.",
+    on_change=lambda: st.session_state.update({"show_fluency": False}),
+    disabled="language_fluency" in st.session_state
+    and st.session_state.language_fluency in ["Yes", "No"],
+)
+
+if st.session_state.language_fluency == "Yes":
+    st.session_state.show_fluency = False
+    st.success(
+        "You can now proceed with the annotation task. Please read the instructions carefully before proceeding."
+    )
+    st.warning(
+        "**It may take up to 20 seconds for the images to load. Please carefuly read the instructions in the meanwhile.**"
+    )
+elif st.session_state.language_fluency == "No":
+    # hide the rest of the page
+    st.error("Unfortunately, you cannot participate in the study.")
+    record_non_participation()
+    st.error(
+        f"Click on the link below or copy and paste the following code into Prolific to confirm your choice: {NO_CONCENT_CODE}"
+    )
+    st.link_button(
+        "Back to Prolific",
+        NO_CONCENT_LINK,
+        type="primary",
+    )
+    st.stop()
+else:
+    st.warning("Please answer to proceed.")
     st.stop()
 
 
