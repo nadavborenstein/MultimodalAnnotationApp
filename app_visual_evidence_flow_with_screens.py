@@ -651,7 +651,8 @@ with container:
                     f'<div dir="auto">{tweet_text}</div>',
                     unsafe_allow_html=True,
                 )
-                st.markdown("#### Tweet image 🖼️")
+
+            st.markdown("#### Tweet image 🖼️")
             with st.container(border=True):
                 st.image(image_data)
     with text_col:
