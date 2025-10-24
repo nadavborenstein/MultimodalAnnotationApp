@@ -664,7 +664,7 @@ with container:
         # )
         # # st.write(tweet_text)
         # st.markdown("---")
-        with st.container(border=False, vertical_alignment="center"):
+        with st.container(border=False, vertical_alignment="bottom"):
             theme = st_theme()["base"]
             colour = "#E8F6FF" if theme == "light" else "#003554"
             title = "Additional context 💡"
