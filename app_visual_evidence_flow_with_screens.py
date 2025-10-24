@@ -639,18 +639,28 @@ container = st.container(
 with container:
     image_col, text_col = st.columns([3, 2])
     with image_col:
-        st.subheader("Tweet image 🖼️")
-        with st.container(border=True):
-            st.image(image_data)
-    with text_col:
-        st.subheader("Tweet text 💬")
-        st.markdown(f"**Posted by:** {user_name}")
+        st.subheader("Tweet")
+        st.markdown(f"#### Author")
+        st.markdown(f"**{user_name}**")
+        st.markdown("---")
+        st.markdown("#### Tweet text 💬")
         st.markdown(
             f'<div dir="auto">{tweet_text}</div>',
             unsafe_allow_html=True,
         )
-        # st.write(tweet_text)
         st.markdown("---")
+        st.markdown("#### Tweet image 🖼️")
+        with st.container(border=True):
+            st.image(image_data)
+    with text_col:
+        # st.subheader("Tweet text 💬")
+        # st.markdown(f"**Posted by:** {user_name}")
+        # st.markdown(
+        #     f'<div dir="auto">{tweet_text}</div>',
+        #     unsafe_allow_html=True,
+        # )
+        # # st.write(tweet_text)
+        # st.markdown("---")
         with st.container(border=False):
             theme = st_theme()["base"]
             colour = "#E8F6FF" if theme == "light" else "#003554"
