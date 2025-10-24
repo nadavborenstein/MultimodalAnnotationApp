@@ -640,8 +640,7 @@ with container:
     image_col, text_col = st.columns([3, 2])
     with image_col:
         st.subheader("Tweet")
-        st.markdown(f"#### Author")
-        st.markdown(f"**{user_name}**")
+        st.markdown(f"#### Author: \n\n**{user_name}**")
         st.markdown("#### Tweet text 💬")
         st.markdown(
             f'<div dir="auto">{tweet_text}</div>',
