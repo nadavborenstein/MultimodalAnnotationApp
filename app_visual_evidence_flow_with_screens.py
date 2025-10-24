@@ -653,8 +653,8 @@ with container:
                 )
 
             st.markdown("#### Tweet image 🖼️")
-            with st.container(border=True):
-                st.image(image_data)
+            # with st.container(border=True):
+            st.image(image_data)
     with text_col:
         # st.subheader("Tweet text 💬")
         # st.markdown(f"**Posted by:** {user_name}")
