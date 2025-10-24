@@ -670,7 +670,7 @@ with container:
             colour = "#E8F6FF" if theme == "light" else "#003554"
             title = "Additional context 💡"
             st.markdown(
-                f'<p>\n\n\n\n</p><div style="background-color:{colour};Height:auto" dir="auto"><h3>{title}</h3>{note_text}</div>',
+                f'<p><br><br></p><div style="background-color:{colour};Height:auto" dir="auto"><h3>{title}</h3>{note_text}</div>',
                 unsafe_allow_html=True,
             )
 
