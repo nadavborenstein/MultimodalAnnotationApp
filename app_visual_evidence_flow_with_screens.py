@@ -641,7 +641,7 @@ with container:
     with image_col:
         st.subheader("Tweet")
         with st.container(border=True):
-            author_col, tweet_col = st.columns([2, 4])
+            author_col, tweet_col = st.columns([1, 4])
             with author_col:
                 st.markdown(f"#### Author 👤")
                 st.markdown(f"**{user_name}**")
