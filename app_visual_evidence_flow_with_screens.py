@@ -667,7 +667,7 @@ with container:
         with st.container(border=False, vertical_alignment="distribute"):
             theme = st_theme()["base"]
             colour = "#E8F6FF" if theme == "light" else "#003554"
-            title = "Additional context 💡"
+            title = "\n\n\n\n\n\n\nAdditional context 💡"
             st.markdown(
                 f'<div style="background-color:{colour};Height:auto" dir="auto"><h3>{title}</h3>{note_text}</div>',
                 unsafe_allow_html=True,
