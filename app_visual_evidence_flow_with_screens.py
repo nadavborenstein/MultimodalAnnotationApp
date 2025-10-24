@@ -639,14 +639,18 @@ container = st.container(
 with container:
     image_col, text_col = st.columns([3, 2])
     with image_col:
-        st.subheader("Tweet")
-        st.markdown(f"#### Author: \n\n**{user_name}**")
-        st.markdown("#### Tweet text 💬")
-        st.markdown(
-            f'<div dir="auto">{tweet_text}</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown("#### Tweet image 🖼️")
+        with st.container(border=True):
+            st.subheader("Tweet")
+            author_col, tweet_col = st.columns([2, 4])
+            with author_col:
+                st.markdown(f"#### Author: \n\n**{user_name}**")
+            with tweet_col:
+                st.markdown("#### Tweet text 💬")
+                st.markdown(
+                    f'<div dir="auto">{tweet_text}</div>',
+                    unsafe_allow_html=True,
+                )
+                st.markdown("#### Tweet image 🖼️")
         with st.container(border=True):
             st.image(image_data)
     with text_col:
