@@ -671,7 +671,7 @@ with container:
             st.markdown(
                 f"<p>"
                 + "<br>" * 10
-                + f'</p><div style="background-color:{colour};Height:auto" dir="auto"><br><h3>{title}</h3>{note_text}<br><br></div>',
+                + f'</p><div style="background-color:{colour};Height:auto" dir="auto"><h3>{title}</h3>{note_text}<br></div>',
                 unsafe_allow_html=True,
             )
 
