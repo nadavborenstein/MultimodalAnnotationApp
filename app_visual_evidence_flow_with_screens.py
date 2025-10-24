@@ -642,13 +642,11 @@ with container:
         st.subheader("Tweet")
         st.markdown(f"#### Author")
         st.markdown(f"**{user_name}**")
-        st.markdown("---")
         st.markdown("#### Tweet text 💬")
         st.markdown(
             f'<div dir="auto">{tweet_text}</div>',
             unsafe_allow_html=True,
         )
-        st.markdown("---")
         st.markdown("#### Tweet image 🖼️")
         with st.container(border=True):
             st.image(image_data)
