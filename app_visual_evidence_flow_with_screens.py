@@ -624,6 +624,7 @@ note = notes.loc[next_item_id]
 image_data = images[note["image_name"]]
 note_text = anonimize_links(note.note)
 tweet_text = remove_links(note.full_text)
+user_name = note.user_name
 
 item_number = get_item_number(progress=st.session_state.progress)
 
@@ -643,6 +644,7 @@ with container:
             st.image(image_data)
     with text_col:
         st.subheader("Tweet text 💬")
+        st.markdown(f"**Posted by:** {user_name}")
         st.markdown(
             f'<div dir="auto">{tweet_text}</div>',
             unsafe_allow_html=True,
