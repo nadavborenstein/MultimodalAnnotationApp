@@ -12,6 +12,7 @@ In this study, you will be asked  to analyze images and text posted by X (Twitte
 
 
 On each screen, you will see:
+- **Author (👤)**: The username who posted the tweet.
 - **Tweet text (💬)**: The text of a tweet that has been identified as misleading.  
 - **Tweet image (🖼️)**: The image(s) attached to that tweet.  
 - **Additional context (💡)**: text written by another user, explaining why the tweet text and/or image is misleading.
@@ -60,7 +61,7 @@ Each question will include:
 Here is an annotated screenshot describing how the questions look like:
 [IMAGE]
 
-⚠️ **Assume the "Additional context 💡" is correct and complete. Use only the information provided to answer the questions.**  You do **not** need to do your own research about the claim.
+⚠️ **Assume the "Additional context 💡" is correct and complete. Use only the information provided to answer the questions.**  You do **not** need to do your own research about the claim. Moreover, do **not** base your desicions on the identity of the author (👤).
 
 ---
 
