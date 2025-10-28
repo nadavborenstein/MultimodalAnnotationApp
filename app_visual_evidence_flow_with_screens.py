@@ -20,8 +20,9 @@ from typing import Tuple, List, Dict
 st.set_page_config(layout="wide")
 conn = st.connection("gcs", type=FilesConnection)
 
-LANGUAGE = "he"
-TASK_NAME = f"visual_evidence_with_screens_{LANGUAGE}"
+LANGUAGE = "en"
+TASK_NAME = f"visual_evidence_with_screens_full_{LANGUAGE}"
+ALLOW_MULTYPLE_SESSIONS = False
 NOTES = "annotation-experiment/data/multimodal_tweets_balanced.csv"
 DEEPEST_NODE = 6
 
@@ -38,13 +39,13 @@ QUALIFICATION_NOTES = "annotation-experiment/data/en_qualification_data.csv"
 INSTRUCTIONS_FILE = "static/instructions.txt"
 QUALIFICATION_IMAGE_FOLDER = "annotation-experiment/static/qualification_images/"
 QUESTION_TREE = "static/question_tree.yaml"
-MAX_ANNOTATIONS_PER_WORKER = 10  # TODO: adjust as needed
+MAX_ANNOTATIONS_PER_WORKER = 11  # TODO: adjust as needed
 ID_COL = "id_str"
 IMAGE_FOLDER = "annotation-experiment/static/resized_images/"
 PROGRESS_FOLDER = f"annotation-experiment/data/worker_progress/{TASK_NAME}"
 DONE_FILE = f"annotation-experiment/data/done_{TASK_NAME}.txt"
 NON_PARTICIPANTS_FILE = "annotation-experiment/data/non_participants.txt"
-NUM_ANNOTATORS_PER_ITEM = 6  # TODO: adjust as needed
+NUM_ANNOTATORS_PER_ITEM = 3  # TODO: adjust as needed
 
 
 DEBUGGING = False
@@ -192,6 +193,8 @@ def load_notes() -> pd.DataFrame:
     notes = notes.drop_duplicates(subset=["image_name"])
     if DEBUGGING:
         notes = notes.head(NUM_NOTES_IN_DEBUGGING)
+
+    notes[ID_COL] = notes[ID_COL].astype(str)
     notes.set_index(ID_COL, inplace=True, drop=False)
 
     if ADD_QUALIFICATIONS:
@@ -226,51 +229,70 @@ def load_images(image_names) -> list:
     return images
 
 
+def select_notes(notes, seed, add_qualifications=True) -> pd.DataFrame:
+    done_notes = load_done()
+    if add_qualifications:
+        qualifications = notes[notes["qualification"]]
+        non_qualifications = notes[~notes["qualification"]]
+        non_qualifications = non_qualifications[
+            ~non_qualifications.index.isin(done_notes)
+        ]
+        non_qualifications = non_qualifications.sample(
+            n=min(MAX_ANNOTATIONS_PER_WORKER, len(non_qualifications)),
+            random_state=seed,
+        )
+        notes_to_label = pd.concat([qualifications, non_qualifications])
+    else:
+        notes = notes[~notes.index.isin(done_notes)]
+        notes_to_label = notes.sample(
+            n=min(MAX_ANNOTATIONS_PER_WORKER, len(notes)), random_state=seed
+        )
+    return notes_to_label
+
+
+def create_progress_pd(worker_id, notes_to_label) -> pd.DataFrame:
+    ids_to_label = notes_to_label.index.tolist()
+    progress = pd.DataFrame(
+        {
+            ID_COL: ids_to_label,
+            "worker_id": [worker_id] * len(ids_to_label),
+            "done": [None] * len(ids_to_label),
+            "label": [None] * len(ids_to_label),
+            "image_name": notes_to_label["image_name"].tolist(),
+            "qualification": notes_to_label["qualification"].tolist(),
+            "time_completed": [None] * len(ids_to_label),
+        }
+    )
+    progress.set_index(ID_COL, inplace=True, drop=False)
+    return progress
+
+
 @st.cache_resource
 def get_worker_session(worker_id: str, notes: pd.DataFrame) -> pd.DataFrame:
+    seed = hash(st.session_state.worker_id) % (2**31)
     # check if a progress file exists for this worker
     progress_file = f"{PROGRESS_FOLDER}/progress_{worker_id}.csv"
     if conn.fs.exists(progress_file):
         progress = conn.fs.open(progress_file, "r").read()
         progress = pd.read_csv(io.StringIO(progress))
+        progress[ID_COL] = progress[ID_COL].astype(str)
         progress.set_index(ID_COL, inplace=True, drop=False)
-        return progress
-    else:
-        seed = hash(st.session_state.worker_id) % (2**31)
-        done_notes = load_done()
-        if ADD_QUALIFICATIONS:
-            qualifications = notes[notes["qualification"]]
-            non_qualifications = notes[~notes["qualification"]]
-            non_qualifications = non_qualifications[
-                ~non_qualifications.index.isin(done_notes)
-            ]
-            non_qualifications = non_qualifications.sample(
-                n=min(MAX_ANNOTATIONS_PER_WORKER, len(non_qualifications)),
-                random_state=seed,
-            )
-            notes_to_label = pd.concat([qualifications, non_qualifications])
-        else:
-            notes = notes[~notes.index.isin(done_notes)]
-            notes_to_label = notes.sample(
-                n=min(MAX_ANNOTATIONS_PER_WORKER, len(notes)), random_state=seed
-            )
 
-        ids_to_label = notes_to_label.index.tolist()
-        progress = pd.DataFrame(
-            {
-                ID_COL: ids_to_label,
-                "worker_id": [worker_id] * len(ids_to_label),
-                "done": [None] * len(ids_to_label),
-                "label": [None] * len(ids_to_label),
-                "image_name": notes_to_label["image_name"].tolist(),
-                "qualification": notes_to_label["qualification"].tolist(),
-                "time_completed": [None] * len(ids_to_label),
-            }
+        if ALLOW_MULTYPLE_SESSIONS:
+            notes_to_label = select_notes(notes, seed, add_qualifications=False)
+            new_progress = create_progress_pd(worker_id, notes_to_label)
+            progress = pd.concat([progress, new_progress])
+            s = progress.to_csv(index=False)
+            conn.fs.open(progress_file, "w").write(s)
+    else:
+        notes_to_label = select_notes(
+            notes, seed, add_qualifications=ADD_QUALIFICATIONS
         )
-        progress.set_index(ID_COL, inplace=True, drop=False)
+        progress = create_progress_pd(worker_id, notes_to_label)
         s = progress.to_csv(index=False)
         conn.fs.open(progress_file, "w").write(s)
-        return progress
+
+    return progress
 
 
 def get_item_number(progress: pd.DataFrame) -> int:
@@ -508,42 +530,42 @@ else:
     st.warning("Please provide your consent to proceed.")
     st.stop()
 
+if LANGUAGE == "he":
+    st.header("Language fluency")
+    st.pills(
+        label="Are you a fluent Hebrew speaker?",
+        options=["No", "Yes"],
+        key="language_fluency",
+        help="You must be a fluent Hebrew speaker to participate in this study.",
+        on_change=lambda: st.session_state.update({"show_fluency": False}),
+        disabled="language_fluency" in st.session_state
+        and st.session_state.language_fluency in ["Yes", "No"],
+    )
 
-st.header("Language fluency")
-st.pills(
-    label="Are you a fluent Hebrew speaker?",
-    options=["No", "Yes"],
-    key="language_fluency",
-    help="You must be a fluent Hebrew speaker to participate in this study.",
-    on_change=lambda: st.session_state.update({"show_fluency": False}),
-    disabled="language_fluency" in st.session_state
-    and st.session_state.language_fluency in ["Yes", "No"],
-)
-
-if st.session_state.language_fluency == "Yes":
-    st.session_state.show_fluency = False
-    st.success(
-        "You can now proceed with the annotation task. Please read the instructions carefully before proceeding."
-    )
-    st.warning(
-        "**It may take up to 20 seconds for the images to load. Please carefuly read the instructions in the meanwhile.**"
-    )
-elif st.session_state.language_fluency == "No":
-    # hide the rest of the page
-    st.error("Unfortunately, you cannot participate in the study.")
-    record_non_participation()
-    st.error(
-        f"Click on the link below or copy and paste the following code into Prolific to confirm your choice: {NO_CONCENT_CODE}"
-    )
-    st.link_button(
-        "Back to Prolific",
-        NO_CONCENT_LINK,
-        type="primary",
-    )
-    st.stop()
-else:
-    st.warning("Please answer to proceed.")
-    st.stop()
+    if st.session_state.language_fluency == "Yes":
+        st.session_state.show_fluency = False
+        st.success(
+            "You can now proceed with the annotation task. Please read the instructions carefully before proceeding."
+        )
+        st.warning(
+            "**It may take up to 20 seconds for the images to load. Please carefuly read the instructions in the meanwhile.**"
+        )
+    elif st.session_state.language_fluency == "No":
+        # hide the rest of the page
+        st.error("Unfortunately, you cannot participate in the study.")
+        record_non_participation()
+        st.error(
+            f"Click on the link below or copy and paste the following code into Prolific to confirm your choice: {NO_CONCENT_CODE}"
+        )
+        st.link_button(
+            "Back to Prolific",
+            NO_CONCENT_LINK,
+            type="primary",
+        )
+        st.stop()
+    else:
+        st.warning("Please answer to proceed.")
+        st.stop()
 
 
 st.header("Instructions")
